@@ -1,6 +1,18 @@
 from django.db import models
 from django.contrib.auth.models import User, AbstractBaseUser, BaseUserManager
-from . import Address
+class Address(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    country = models.CharField(max_length=255)
+    governorate = models.CharField(max_length=255)
+    city = models.CharField(max_length=255)
+    street = models.CharField(max_length=255)
+    building_number = models.CharField(max_length=255)
+    apartment_number = models.CharField(max_length=255)
+    notes = models.TextField()
+
+    def __str__(self):
+       return f"{self.country}, {self.governorate}, {self.city}, {self.street}, {self.building_number}, {self.apartment_number}"
+    
 
 class AccountManager(BaseUserManager):
     def create_user(self, email, phone_number, first_name, last_name, address, birthdate, password=None):
@@ -36,13 +48,14 @@ class AccountManager(BaseUserManager):
         user.is_superuser = True
         user.save(using=self._db)
         return user
+    
+
 
 class User(AbstractBaseUser):
     email = models.EmailField(verbose_name='email', max_length=60, unique=True)
     phone_number = models.CharField(max_length=255, unique=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
-    address = models.ForeignKey(Address, on_delete=models.CASCADE)
     birthdate = models.DateField()
     is_admin = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -125,15 +138,7 @@ class cartitem(models.Model):
         return f"{self.cart},{self.product},{self.quantity}"
       
 
-class Address(models.Model):
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    country = models.CharField(max_length=255)
-    governorate = models.CharField(max_length=255)
-    city = models.CharField(max_length=255)
-    street = models.CharField(max_length=255)
-    building_number = models.CharField(max_length=255)
-    apartment_number = models.CharField(max_length=255)
-    notes = models.TextField()
+
 
 
 

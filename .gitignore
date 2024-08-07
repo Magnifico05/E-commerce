@@ -1,3 +1,5 @@
 venv
-myproject/myproject/myapp/migrations
-requirements.txt
+django migrations
+**/migrations/**
+ !**/migrations/__init__.py
+ !**/migrations/
