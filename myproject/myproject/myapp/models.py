@@ -27,4 +27,34 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
-
+class categories(models.Model):
+    name = models.CharField(max_length=255)
+    def __str__(self):
+        return self.name
+class order(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    ordertotal= models.FloatField()
+    date = models.DateField()
+    delivery=models.FloatField()
+    
+    def __str__(self):
+        return f"{self.user},{self.date},{self.delivery},{self.ordertotal}"
+class orderitem(models.Model):
+    order = models.ForeignKey(order, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+    def __str__(self):
+        return f"{self.order},{self.product},{self.quantity}"
+class cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    totalprice = models.FloatField() 
+    def __str__(self):
+        return f"{self.user},{self.totalprice}"
+class cartitem(models.Model):
+    cart = models.ForeignKey(cart, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+    def __str__(self):
+        return f"{self.cart},{self.product},{self.quantity}"
+      
+    
