@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User, AbstractBaseUser, BaseUserManager
 
 class Specification(models.Model):
     processor = models.CharField(max_length=255)
@@ -22,11 +23,6 @@ class Product(models.Model):
     color = models.CharField(max_length=255)
     weight = models.FloatField()
     dimensions = models.CharField(max_length=255)
-    connectivity = models.CharField(max_length=255)
-    features = models.TextField()
-    reviews = models.TextField()
-    availability = models.BooleanField()
-    sku = models.CharField(max_length=255)
     images = models.ImageField(upload_to='products/')
     description = models.TextField()
     manufacturer_part_number = models.CharField(max_length=255)
