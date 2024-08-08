@@ -1,18 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User, AbstractBaseUser, BaseUserManager
 
-class Address(models.Model):
-    country = models.CharField(max_length=255)
-    governorate = models.CharField(max_length=255)
-    city = models.CharField(max_length=255)
-    street = models.CharField(max_length=255)
-    building_number = models.CharField(max_length=255)
-    apartment_number = models.CharField(max_length=255)
-    notes = models.TextField()
 
-    def __str__(self):
-       return f"{self.country}, {self.governorate}, {self.city}, {self.street}, {self.building_number}, {self.apartment_number}"
-    
 
 class AccountManager(BaseUserManager):
     def create_user(self, email, phone_number, first_name, last_name, birthdate, password=None):
@@ -73,11 +62,19 @@ class User(AbstractBaseUser):
     def has_module_perms(self, app_label):
         return True
 
-
-class UserAddresses (models.Model):
+class Address(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    address = models.ForeignKey(Address, on_delete=models.CASCADE)
-    
+    country = models.CharField(max_length=255)
+    governorate = models.CharField(max_length=255)
+    city = models.CharField(max_length=255)
+    street = models.CharField(max_length=255)
+    building_number = models.CharField(max_length=255)
+    apartment_number = models.CharField(max_length=255)
+    notes = models.TextField()
+
+    def __str__(self):
+       return f"{self.country}, {self.governorate}, {self.city}, {self.street}, {self.building_number}, {self.apartment_number}"
+        
 
 class Specification(models.Model):
     processor = models.CharField(max_length=255)
@@ -90,6 +87,13 @@ class Specification(models.Model):
 
     def __str__(self):
         return f"{self.processor}, {self.ram}, {self.storage}"
+    
+
+class categories(models.Model):
+    name = models.CharField(max_length=255)
+    def __str__(self):
+        return self.name
+
 
 class Product(models.Model):
     name = models.CharField(max_length=255)
@@ -102,14 +106,12 @@ class Product(models.Model):
     images = models.ImageField(upload_to='products/')
     description = models.TextField()
     specification = models.ForeignKey(Specification, on_delete=models.CASCADE, related_name='products')
+    category = models.ForeignKey(categories, on_delete=models.CASCADE, related_name='products')
 
     def __str__(self):
         return self.name
 
-class categories(models.Model):
-    name = models.CharField(max_length=255)
-    def __str__(self):
-        return self.name
+
 
 class order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
