@@ -63,7 +63,7 @@ class User(AbstractBaseUser):
         return True
 
 class Address(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     country = models.CharField(max_length=255)
     governorate = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
@@ -106,7 +106,7 @@ class Product(models.Model):
     images = models.ImageField(upload_to='products/')
     description = models.TextField()
     specification = models.ForeignKey(Specification, on_delete=models.CASCADE, related_name='products')
-    category = models.ForeignKey(categories, on_delete=models.CASCADE, related_name='products')
+    category = models.ForeignKey(categories, on_delete=models.CASCADE, related_name='products', null=True)
 
     def __str__(self):
         return self.name
