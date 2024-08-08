@@ -70,7 +70,7 @@ class Address(models.Model):
     street = models.CharField(max_length=255)
     building_number = models.CharField(max_length=255)
     apartment_number = models.CharField(max_length=255)
-    notes = models.TextField()
+    notes = models.TextField(blank=True)
 
     def __str__(self):
        return f"{self.country}, {self.governorate}, {self.city}, {self.street}, {self.building_number}, {self.apartment_number}"
