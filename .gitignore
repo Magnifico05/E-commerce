@@ -4,3 +4,5 @@ django migrations
  !**/migrations/__init__.py
  !**/migrations/
  .env
+ .env/
+ .ENV/
