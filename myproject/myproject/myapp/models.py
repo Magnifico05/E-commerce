@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User, AbstractBaseUser, BaseUserManager
 
 class Address(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
     country = models.CharField(max_length=255)
     governorate = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
@@ -16,7 +15,7 @@ class Address(models.Model):
     
 
 class AccountManager(BaseUserManager):
-    def create_user(self, email, phone_number, first_name, last_name, address, birthdate, password=None):
+    def create_user(self, email, phone_number, first_name, last_name, birthdate, password=None):
         if not email:
             raise ValueError('Users must have an email address')
         if not phone_number:
@@ -27,7 +26,6 @@ class AccountManager(BaseUserManager):
             phone_number=phone_number,
             first_name=first_name,
             last_name=last_name,
-            address=address,
             birthdate=birthdate,
         )
 
@@ -35,13 +33,12 @@ class AccountManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, phone_number, first_name, last_name, address, birthdate, password=None):
+    def create_superuser(self, email, phone_number, first_name, last_name, birthdate, password=None):
         user = self.create_user(
             email=self.normalize_email(email),
             phone_number=phone_number,
             first_name=first_name,
             last_name=last_name,
-            address=address,
             birthdate=birthdate,
             password=password,
         )
@@ -63,7 +60,7 @@ class User(AbstractBaseUser):
     last_login = models.DateTimeField(auto_now=True)
 
     USERNAME_FIELD = 'phone_number'
-    REQUIRED_FIELDS = ['email', 'first_name', 'last_name', 'address', 'birthdate']
+    REQUIRED_FIELDS = ['email', 'first_name', 'last_name', 'birthdate']
 
     objects = AccountManager()
 
@@ -76,6 +73,11 @@ class User(AbstractBaseUser):
     def has_module_perms(self, app_label):
         return True
 
+
+class UserAddresses (models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    address = models.ForeignKey(Address, on_delete=models.CASCADE)
+    
 
 class Specification(models.Model):
     processor = models.CharField(max_length=255)
