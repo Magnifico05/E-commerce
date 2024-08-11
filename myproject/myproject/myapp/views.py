@@ -114,17 +114,44 @@ class UserCartView(generics.ListAPIView):
     
 #return address of order : order -> user -> address
 
-class OrderAddressView(generics.ListAPIView):
-    serializer_class = AddressSerializer
-    permission_classes = [IsAuthenticated]
+# class OrderAddressView(generics.ListAPIView):
+#     serializer_class = AddressSerializer
+#     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        order_id = self.kwargs['order_id']
+#     def get_queryset(self):
+#         order_id = self.kwargs['order_id']
+#         try:
+#             Order = order.objects.get(id=order_id)
+#         except order.DoesNotExist:
+#                 raise NotFound(detail="Order not found")
+        
+#         user = Order.user
+#         try:
+#             address = Address.objects.get(user=user)
+#         except Address.DoesNotExist:
+#             raise NotFound(detail="Address not found for this user")
+
+#         return address
+#     def get(self, request, *args, **kwargs):
+#         address = self.get_object()
+#         serializer = self.get_serializer(address)
+#         return Response(serializer.data)    
+
+class OrderAddressView(generics.GenericAPIView):
+    serializer_class = AddressSerializer
+    lookup_field = 'order_id'  # This is the custom field you will use for lookup
+
+    def get_object(self):
+        # Use the custom lookup_field to retrieve the order
+        order_id = self.kwargs.get(self.lookup_field)
+
         try:
+            # Retrieve the order
             Order = order.objects.get(id=order_id)
         except order.DoesNotExist:
-                raise NotFound(detail="Order not found")
-        
+            raise NotFound(detail="Order not found")
+
+        # Find the user's address (assuming a user has one address)
         user = Order.user
         try:
             address = Address.objects.get(user=user)
@@ -132,10 +159,11 @@ class OrderAddressView(generics.ListAPIView):
             raise NotFound(detail="Address not found for this user")
 
         return address
+
     def get(self, request, *args, **kwargs):
         address = self.get_object()
         serializer = self.get_serializer(address)
-        return Response(serializer.data)    
+        return Response(serializer.data)
 
 class OrdersInAddressView(generics.ListAPIView):
 

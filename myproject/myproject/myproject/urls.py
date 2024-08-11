@@ -45,6 +45,5 @@ urlpatterns = [
     path('product/<int:product_id>/users/', UsersByProductView.as_view(), name='user-by-product'),
     path('orders-in-address/<int:address_id>/', OrdersInAddressView.as_view(), name='orders-in-address'),
     path('user-cart/<int:user_id>/', UserCartView.as_view(), name='user-cart'),
-    
     path('order-address/<int:order_id>/', OrderAddressView.as_view(), name='order-address'),
 ]
