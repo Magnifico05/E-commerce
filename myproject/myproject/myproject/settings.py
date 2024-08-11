@@ -44,9 +44,9 @@ REST_FRAMEWORK = {
     ],
 }
 
-SIMPLE_JWT = {
+SIMPLE_JWT = { 
     'ACCESS_TOKEN_LIFETIME': timedelta(
-        minutes=config('ACCESS_TOKEN_LIFETIME_MINUTES', default=5, cast=int)
+        minutes=config('ACCESS_TOKEN_LIFETIME_MINUTES', default=100, cast=int)
     ),
     'REFRESH_TOKEN_LIFETIME': timedelta(
         days=config('REFRESH_TOKEN_LIFETIME_DAYS', default=1, cast=int)
@@ -54,7 +54,7 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
     'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY,
+    'SIGNING_KEY': config('Simple_JWT_SECRET'),
     'VERIFYING_KEY': None,
     'AUTH_HEADER_TYPES': ('Bearer',),
     'USER_ID_FIELD': 'id',

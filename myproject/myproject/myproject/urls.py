@@ -18,6 +18,11 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from myapp.views import *
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
 
 router = DefaultRouter()
 router.register(r'users', UserViewSet)
@@ -33,11 +38,13 @@ router.register(r'cart-items', CartItemViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('admin/', admin.site.urls),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('users/<int:user_id>/addresses/', UserAddressesView.as_view(), name='user-addresses'),
     path('users/<int:user_id>/orders/', UserOrdersView.as_view(), name='user-orders'),
     path('product/<int:product_id>/users/', UsersByProductView.as_view(), name='user-by-product'),
-    path('users/<int:user_id>/cart/', UserCartView.as_view(), name='user-cart'),
-    path('order/<int:order_id>/address/', OrderAddressView.as_view(), name='order-address'),
-    path('address/<int:address_id>/orders/', OrdersInAddressView.as_view(), name='orders-in-address'),
-
+    path('orders-in-address/<int:address_id>/', OrdersInAddressView.as_view(), name='orders-in-address'),
+    path('user-cart/<int:user_id>/', UserCartView.as_view(), name='user-cart'),
+    
+    path('order-address/<int:order_id>/', OrderAddressView.as_view(), name='order-address'),
 ]

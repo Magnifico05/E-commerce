@@ -1,9 +1,12 @@
 from django.shortcuts import render
+from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework import viewsets
 from .models import *
 from .serializers import *
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.exceptions import NotFound
+
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -92,15 +95,24 @@ class UsersByProductView(generics.ListAPIView):
         product_id = self.kwargs['product_id']
         return User.objects.filter(order__orderitem__product_id=product_id)
     
+# user -> cart -> cartitem -> 
 
 class UserCartView(generics.ListAPIView):
-    serializer_class = CartSerializer
+    serializer_class = CartItemSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        user_id = self.kwargs['user_id']
-        return cart.objects.filter(cart__user_id=user_id)    
+        user_id = self.kwargs.get('user_id')
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            raise NotFound(detail="User not found")
+
+        carts_with_user = cart.objects.filter(user_id=user_id)
+        
+        return cartitem.objects.filter(cart__in=carts_with_user)
     
+#return address of order : order -> user -> address
 
 class OrderAddressView(generics.ListAPIView):
     serializer_class = AddressSerializer
@@ -108,13 +120,40 @@ class OrderAddressView(generics.ListAPIView):
 
     def get_queryset(self):
         order_id = self.kwargs['order_id']
-        return Address.objects.filter(order__order_id=order_id)
-    
+        try:
+            Order = order.objects.get(id=order_id)
+        except order.DoesNotExist:
+                raise NotFound(detail="Order not found")
+        
+        user = Order.user
+        try:
+            address = Address.objects.get(user=user)
+        except Address.DoesNotExist:
+            raise NotFound(detail="Address not found for this user")
+
+        return address
+    def get(self, request, *args, **kwargs):
+        address = self.get_object()
+        serializer = self.get_serializer(address)
+        return Response(serializer.data)    
 
 class OrdersInAddressView(generics.ListAPIView):
+
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        address_id = self.kwargs['address_id']
-        return order.objects.filter(address__address_id=address_id)
+        # Get the address_id from the URL parameters
+        address_id = self.kwargs.get('address_id')
+
+        try:
+            # Check if the address exists
+            address = Address.objects.get(id=address_id)
+        except Address.DoesNotExist:
+            raise NotFound(detail="Address not found")
+
+        # Find all users associated with this address
+        users_with_address = User.objects.filter(address__id=address_id)
+        
+        # Find all orders for these users
+        return order.objects.filter(user__in=users_with_address)
