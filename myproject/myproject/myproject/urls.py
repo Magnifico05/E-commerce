@@ -34,4 +34,10 @@ urlpatterns = [
     path('', include(router.urls)),
     path('admin/', admin.site.urls),
     path('users/<int:user_id>/addresses/', UserAddressesView.as_view(), name='user-addresses'),
+    path('users/<int:user_id>/orders/', UserOrdersView.as_view(), name='user-orders'),
+    path('product/<int:product_id>/users/', UsersByProductView.as_view(), name='user-by-product'),
+    path('users/<int:user_id>/cart/', UserCartView.as_view(), name='user-cart'),
+    path('order/<int:order_id>/address/', OrderAddressView.as_view(), name='order-address'),
+    path('address/<int:address_id>/orders/', OrdersInAddressView.as_view(), name='orders-in-address'),
+
 ]

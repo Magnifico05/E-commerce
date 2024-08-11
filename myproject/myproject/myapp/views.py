@@ -75,3 +75,46 @@ class UserAddressesView(generics.ListAPIView):
         return Address.objects.filter(user_id=user_id)
 
 
+class UserOrdersView(generics.ListAPIView):
+    serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        return order.objects.filter(user_id=user_id)
+
+
+class UsersByProductView(generics.ListAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        product_id = self.kwargs['product_id']
+        return User.objects.filter(order__orderitem__product_id=product_id)
+    
+
+class UserCartView(generics.ListAPIView):
+    serializer_class = CartSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user_id = self.kwargs['user_id']
+        return cart.objects.filter(cart__user_id=user_id)    
+    
+
+class OrderAddressView(generics.ListAPIView):
+    serializer_class = AddressSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        order_id = self.kwargs['order_id']
+        return Address.objects.filter(order__order_id=order_id)
+    
+
+class OrdersInAddressView(generics.ListAPIView):
+    serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        address_id = self.kwargs['address_id']
+        return order.objects.filter(address__address_id=address_id)
