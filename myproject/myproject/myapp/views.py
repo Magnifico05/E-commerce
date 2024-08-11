@@ -1,8 +1,70 @@
 from django.shortcuts import render
 from rest_framework import generics
-from .models import Address
-from .serializers import AddressSerializer
-from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets
+from .models import *
+from .serializers import *
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        if self.action in ['list']:
+            self.permission_classes = [IsAdminUser]
+        else:
+            self.permission_classes = [IsAuthenticated]
+        return super().get_permissions()
+
+
+class AddressViewSet(viewsets.ModelViewSet):
+    queryset = Address.objects.all()
+    serializer_class = AddressSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class SpecificationViewSet(viewsets.ModelViewSet):
+    queryset = Specification.objects.all()
+    serializer_class = SpecificationSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class CategoriesViewSet(viewsets.ModelViewSet):
+    queryset = categories.objects.all()
+    serializer_class = CategoriesSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class OrderItemViewSet(viewsets.ModelViewSet):
+    queryset = orderitem.objects.all()
+    serializer_class = OrderItemSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class OrderViewSet(viewsets.ModelViewSet):
+    queryset = order.objects.all()
+    serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class CartItemViewSet(viewsets.ModelViewSet):
+    queryset = cartitem.objects.all()
+    serializer_class = CartItemSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class CartViewSet(viewsets.ModelViewSet):
+    queryset = cart.objects.all()
+    serializer_class = CartSerializer
+    permission_classes = [IsAuthenticated]
+    
 
 class UserAddressesView(generics.ListAPIView):
     serializer_class = AddressSerializer
