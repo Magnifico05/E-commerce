@@ -1,17 +1,24 @@
+from datetime import date
+import logging
 from django.shortcuts import render
+from matplotlib.dates import DateFormatter
+from rest_framework.response import Response
+from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework import viewsets
 from .models import *
 from .serializers import *
+from django.db import transaction
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+
 from rest_framework.exceptions import NotFound
 
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+   ## permission_classes = [IsAuthenticated]
 
     def get_permissions(self):
         if self.action in ['list']:
@@ -30,7 +37,7 @@ class AddressViewSet(viewsets.ModelViewSet):
 class SpecificationViewSet(viewsets.ModelViewSet):
     queryset = Specification.objects.all()
     serializer_class = SpecificationSerializer
-    permission_classes = [IsAuthenticated]
+   ## permission_classes = [IsAuthenticated]
 
 
 class CategoriesViewSet(viewsets.ModelViewSet):
@@ -42,7 +49,7 @@ class CategoriesViewSet(viewsets.ModelViewSet):
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [IsAuthenticated]
+   ## permission_classes = [IsAuthenticated]
 
 
 class OrderItemViewSet(viewsets.ModelViewSet):
@@ -168,7 +175,7 @@ class OrderAddressView(generics.GenericAPIView):
 class OrdersInAddressView(generics.ListAPIView):
 
     serializer_class = OrderSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         # Get the address_id from the URL parameters
@@ -186,15 +193,106 @@ class OrdersInAddressView(generics.ListAPIView):
         # Find all orders for these users
         return order.objects.filter(user__in=users_with_address)
         address_id = self.kwargs['address_id']
-        return order.objects.filter(address__address_id=address_id)
-from rest_framework import generics
-from .models import Specification
-from .serializers import SpecificationSerializer
 
 class ProductSpecificationListView(generics.ListAPIView):
     serializer_class = SpecificationSerializer
 
     def get_queryset(self):
         product_id = self.kwargs.get('product_id')
-        print(f"Product ID in get_queryset: {product_id}")  # Debug statement
-        return Specification.objects.filter(product_id=product_id)
+        try:
+            product = Product.objects.get(id=product_id)
+            return Specification.objects.filter(id=product.specification_id)
+        except Product.DoesNotExist:
+            return Specification.objects.none()
+
+class ProductsByCategoryView(generics.ListAPIView):
+    serializer_class = ProductSerializer
+
+    def get_queryset(self):
+        product_id = self.kwargs.get('product_id')
+        try:
+            product = Product.objects.get(id=product_id)
+            category = product.category
+            return Product.objects.filter(category=category)
+        except Product.DoesNotExist:
+            return Product.objects.none()
+
+class ProductCategoryView(generics.RetrieveAPIView):
+    serializer_class = CategoriesSerializer
+
+    def get_object(self):
+        product_id = self.kwargs.get('product_id')
+        try:
+            product = Product.objects.get(id=product_id)
+            # Return the category of the specified product
+            return product.category
+        except Product.DoesNotExist:
+            return None
+class OrderItemListView(generics.ListAPIView):
+    serializer_class = OrderItemSerializer
+
+    def get_queryset(self):
+        order_id = self.kwargs.get('order_id')
+        return orderitem.objects.filter(order_id=order_id)
+
+class CartItemListView(generics.ListAPIView):
+    serializer_class = CartItemSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Get the cart ID from the URL parameters
+        cart_id = self.kwargs.get('cart_id')
+        # Filter cart items by the provided cart ID
+        return cartitem.objects.filter(cart_id=cart_id)
+logger = logging.getLogger(__name__)
+
+class CheckoutView(generics.GenericAPIView):
+    serializer_class = OrderItemSerializer
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+
+        # Ensure the user exists
+        if not user:
+            logger.error("User is not found in the request.")
+            return Response({'detail': 'User is not found.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Start a transaction to ensure data integrity
+            with transaction.atomic():
+                # Get the user's cart
+                try:
+                    user_cart = cart.objects.get(user=user)
+                except cart.DoesNotExist:
+                    logger.error(f"Cart not found for user {user.id}")
+                    return Response({'detail': 'Cart not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+                # Create a new order
+                new_order = order.objects.create(
+                    user=user,
+                    ordertotal=user_cart.totalprice,
+                    date=date.today(),
+                    delivery=0.0  # Assuming default delivery cost
+                )
+
+                # Transfer all cart items to order items
+                cart_items = cartitem.objects.filter(cart=user_cart)
+                order_items = []
+                for cart_item in cart_items:
+                    order_item = orderitem.objects.create(
+                        order=new_order,
+                        product=cart_item.product,
+                        quantity=cart_item.quantity
+                    )
+                    order_items.append(order_item)
+
+                # Clear the cart
+                cart_items.delete()
+
+            # Serialize and return the order items
+            serializer = self.get_serializer(order_items, many=True)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            logger.error(f"Error during checkout: {e}")
+            return Response({'detail': 'An error occurred during checkout.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
