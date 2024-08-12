@@ -2,16 +2,19 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework import viewsets
+from rest_framework import status
 from .models import *
 from .serializers import *
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework.exceptions import NotFound
+from rest_framework_simplejwt.tokens import RefreshToken
+
 
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_permissions(self):
         if self.action in ['list']:
@@ -24,54 +27,54 @@ class UserViewSet(viewsets.ModelViewSet):
 class AddressViewSet(viewsets.ModelViewSet):
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 
 class SpecificationViewSet(viewsets.ModelViewSet):
     queryset = Specification.objects.all()
     serializer_class = SpecificationSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 
 class CategoriesViewSet(viewsets.ModelViewSet):
     queryset = categories.objects.all()
     serializer_class = CategoriesSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 
 class OrderItemViewSet(viewsets.ModelViewSet):
     queryset = orderitem.objects.all()
     serializer_class = OrderItemSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = order.objects.all()
     serializer_class = OrderSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 
 class CartItemViewSet(viewsets.ModelViewSet):
     queryset = cartitem.objects.all()
     serializer_class = CartItemSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 
 class CartViewSet(viewsets.ModelViewSet):
     queryset = cart.objects.all()
     serializer_class = CartSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     
 
 class UserAddressesView(generics.ListAPIView):
     serializer_class = AddressSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         user_id = self.kwargs['user_id']
@@ -80,7 +83,7 @@ class UserAddressesView(generics.ListAPIView):
 
 class UserOrdersView(generics.ListAPIView):
     serializer_class = OrderSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         user_id = self.kwargs['user_id']
@@ -89,7 +92,7 @@ class UserOrdersView(generics.ListAPIView):
 
 class UsersByProductView(generics.ListAPIView):
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         product_id = self.kwargs['product_id']
@@ -99,7 +102,7 @@ class UsersByProductView(generics.ListAPIView):
 
 class UserCartView(generics.ListAPIView):
     serializer_class = CartItemSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         user_id = self.kwargs.get('user_id')
@@ -139,6 +142,8 @@ class UserCartView(generics.ListAPIView):
 
 class OrderAddressView(generics.GenericAPIView):
     serializer_class = AddressSerializer
+    permission_classes = [AllowAny]
+
     lookup_field = 'order_id'  # This is the custom field you will use for lookup
 
     def get_object(self):
@@ -168,7 +173,7 @@ class OrderAddressView(generics.GenericAPIView):
 class OrdersInAddressView(generics.ListAPIView):
 
     serializer_class = OrderSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         # Get the address_id from the URL parameters
@@ -185,3 +190,32 @@ class OrdersInAddressView(generics.ListAPIView):
         
         # Find all orders for these users
         return order.objects.filter(user__in=users_with_address)
+    
+
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = RegisterSerializer
+    permission_classes = [AllowAny]
+
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
+    
+
+class LoginView(generics.GenericAPIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        serializer = LoginSerializer(data = request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+
+        refresh = RefreshToken.for_user(user)
+
+        return Response({
+            'refresh' : str(refresh),
+            'access' : str(refresh.access_token),
+        }, status = status.HTTP_200_OK)
