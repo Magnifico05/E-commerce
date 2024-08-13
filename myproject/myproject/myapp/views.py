@@ -104,17 +104,6 @@ class UsersByProductView(generics.ListAPIView):
     def get_queryset(self):
         product_id = self.kwargs['product_id']
         return User.objects.filter(order__orderitem__product_id=product_id)
-    
-# class secure(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def get(self, request):
-#         content = {'message': 'Hello, World!'}
-#         return Response(content)    
-    
-# user -> cart -> cartitem -> 
-        return User.objects.filter(order__orderitem__product_id=product_id) 
-
 class UserCartView(generics.ListAPIView):
     serializer_class = CartItemSerializer
     permission_classes = [IsAuthenticated]
@@ -266,43 +255,66 @@ class CartItemListView(generics.ListAPIView):
         # Filter cart items by the provided cart ID
         return cartitem.objects.filter(cart_id=cart_id)
 class CheckoutView(generics.GenericAPIView):
-    serializer_class = OrderItemSerializer
+    serializer_class = CheckoutSerializer
+    permission_classes = [AllowAny]  # Explicitly allow unauthenticated access
 
     def post(self, request, *args, **kwargs):
-        user_id = request.data.get('user_id')
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        user_id = serializer.validated_data['user_id']
+        address_id = serializer.validated_data['address_id']
+        cart_items_data = serializer.validated_data['cart_items']
 
         try:
             user = User.objects.get(id=user_id)
         except User.DoesNotExist:
             return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
 
-        with transaction.atomic():
-            try:
-                user_cart = cart.objects.get(user=user)
-            except cart.DoesNotExist:
-                return Response({'detail': 'Cart not found.'}, status=status.HTTP_404_NOT_FOUND)
+        try:
+            user_cart = cart.objects.get(user=user)
+        except cart.DoesNotExist:
+            return Response({'detail': 'Cart not found.'}, status=status.HTTP_404_NOT_FOUND)
 
+        try:
+            address = Address.objects.get(id=address_id)
+            delivery_cost = address.delivery_cost
+        except Address.DoesNotExist:
+            return Response({'detail': 'Address not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        print(f"User found: {user}")
+        print(f"Cart found: {user_cart}")
+        print(f"Address found: {address}")
+
+        with transaction.atomic():
             new_order = order.objects.create(
                 user=user,
-                ordertotal=user_cart.totalprice,
+                ordertotal=user_cart.totalprice + delivery_cost,  # Include delivery cost
                 date=date.today(),
-                delivery=0.0
+                delivery=delivery_cost
             )
 
-            cart_items = cartitem.objects.filter(cart=user_cart)
             order_items = []
-            for cart_item in cart_items:
+            for item_data in cart_items_data:
+                product_id = item_data.get('product_id')
+                quantity = item_data.get('quantity', 1)
+
+                try:
+                    product = Product.objects.get(id=product_id)
+                except Product.DoesNotExist:
+                    return Response({'detail': f'Product with id {product_id} not found.'}, status=status.HTTP_404_NOT_FOUND)
+
                 order_item = orderitem.objects.create(
                     order=new_order,
-                    product=cart_item.product,
-                    quantity=cart_item.quantity
+                    product=product,
+                    quantity=quantity
                 )
                 order_items.append(order_item)
 
-            cart_items.delete()
+            cartitem.objects.filter(cart=user_cart).delete()
 
-        serializer = self.get_serializer(order_items, many=True)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        order_items_serializer = self.get_serializer(order_items, many=True)
+        return Response(order_items_serializer.data, status=status.HTTP_201_CREATED)
 class SendOTPView(generics.GenericAPIView):
     serializer_class = OTPSerializer  # Specify the serializer class
 

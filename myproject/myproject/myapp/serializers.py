@@ -134,3 +134,12 @@ class OTPSerializer(serializers.Serializer):
 class OTPVerifySerializer(serializers.Serializer):
     email = serializers.EmailField()
     otp_code = serializers.CharField(max_length=6)
+class CheckoutSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField()
+    address_id = serializers.IntegerField()  # Add this to get the delivery cost
+    cart_items = serializers.ListField(child=serializers.DictField())
+
+    def validate(self, data):
+        if 'address_id' not in data:
+            raise serializers.ValidationError("Address ID is required.")
+        return data

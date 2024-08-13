@@ -85,6 +85,7 @@ class Address(models.Model):
     building_number = models.CharField(max_length=255)
     apartment_number = models.CharField(max_length=255)
     notes = models.TextField(blank=True)
+    delivery_cost = models.FloatField(default=0.0) 
 
     def __str__(self):
        return f"{self.country}, {self.governorate}, {self.city}, {self.street}, {self.building_number}, {self.apartment_number}"
@@ -147,7 +148,7 @@ class cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     totalprice = models.FloatField() 
     def __str__(self):
-        return f"{self.user},{self.totalprice}"
+        return f"Cart for {self.user}"
     
 class cartitem(models.Model):
     cart = models.ForeignKey(cart, on_delete=models.CASCADE)
