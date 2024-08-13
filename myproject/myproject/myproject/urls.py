@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from myapp.views import *
+from myapp.views import CheckoutView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -36,5 +37,7 @@ urlpatterns = [
    path('orders/<int:order_id>/items/', OrderItemListView.as_view(), name='order-items'),
    path('checkout/', CheckoutView.as_view(), name='checkout'),
    path('carts/<int:cart_id>/items/', CartItemListView.as_view(), name='cart-items'),
+   path('send-otp/', SendOTPView.as_view(), name='send-otp'),
+    path('verify-otp/', VerifyOTPView.as_view(), name='verify-otp'),
 ]
 

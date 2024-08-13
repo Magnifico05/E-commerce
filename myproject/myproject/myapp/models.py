@@ -1,4 +1,9 @@
+
+import random
+from datetime import timedelta 
+from django.utils import timezone
 from django.db import models
+import datetime
 from django.contrib.auth.models import User, AbstractBaseUser, BaseUserManager
 
 
@@ -141,11 +146,17 @@ class cartitem(models.Model):
     quantity = models.IntegerField()
     def __str__(self):
         return f"{self.cart},{self.product},{self.quantity}"
-      
+class OTP(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    otp_code = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True,null=True)
+    expires_at = models.DateTimeField(null=True, blank=True)
 
+   
 
-
-
-
+    def is_valid(self):
+        if self.expires_at is None:
+            return False  # Consider OTP invalid if expires_at is None
+        return timezone.now() < self.expires_at
 
 

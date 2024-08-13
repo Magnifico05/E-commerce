@@ -68,3 +68,8 @@ class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = cart
         fields = '__all__'
+class OTPSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True, help_text="The email address to which the OTP will be sent.")
+class OTPVerifySerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    otp_code = serializers.CharField(max_length=6)

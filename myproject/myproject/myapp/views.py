@@ -1,7 +1,4 @@
 from datetime import date
-import logging
-from django.shortcuts import render
-from matplotlib.dates import DateFormatter
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.response import Response
@@ -11,14 +8,15 @@ from .models import *
 from .serializers import *
 from django.db import transaction
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-
+from django.core.mail import send_mail
 from rest_framework.exceptions import NotFound
-
+from datetime import  timedelta
+from django.utils import timezone
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-   ## permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_permissions(self):
         if self.action in ['list']:
@@ -37,7 +35,7 @@ class AddressViewSet(viewsets.ModelViewSet):
 class SpecificationViewSet(viewsets.ModelViewSet):
     queryset = Specification.objects.all()
     serializer_class = SpecificationSerializer
-   ## permission_classes = [IsAuthenticated]
+
 
 
 class CategoriesViewSet(viewsets.ModelViewSet):
@@ -49,8 +47,6 @@ class CategoriesViewSet(viewsets.ModelViewSet):
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-   ## permission_classes = [IsAuthenticated]
-
 
 class OrderItemViewSet(viewsets.ModelViewSet):
     queryset = orderitem.objects.all()
@@ -100,9 +96,7 @@ class UsersByProductView(generics.ListAPIView):
 
     def get_queryset(self):
         product_id = self.kwargs['product_id']
-        return User.objects.filter(order__orderitem__product_id=product_id)
-    
-# user -> cart -> cartitem -> 
+        return User.objects.filter(order__orderitem__product_id=product_id) 
 
 class UserCartView(generics.ListAPIView):
     serializer_class = CartItemSerializer
@@ -119,31 +113,6 @@ class UserCartView(generics.ListAPIView):
         
         return cartitem.objects.filter(cart__in=carts_with_user)
     
-#return address of order : order -> user -> address
-
-# class OrderAddressView(generics.ListAPIView):
-#     serializer_class = AddressSerializer
-#     permission_classes = [IsAuthenticated]
-
-#     def get_queryset(self):
-#         order_id = self.kwargs['order_id']
-#         try:
-#             Order = order.objects.get(id=order_id)
-#         except order.DoesNotExist:
-#                 raise NotFound(detail="Order not found")
-        
-#         user = Order.user
-#         try:
-#             address = Address.objects.get(user=user)
-#         except Address.DoesNotExist:
-#             raise NotFound(detail="Address not found for this user")
-
-#         return address
-#     def get(self, request, *args, **kwargs):
-#         address = self.get_object()
-#         serializer = self.get_serializer(address)
-#         return Response(serializer.data)    
-
 class OrderAddressView(generics.GenericAPIView):
     serializer_class = AddressSerializer
     lookup_field = 'order_id'  # This is the custom field you will use for lookup
@@ -244,55 +213,100 @@ class CartItemListView(generics.ListAPIView):
         cart_id = self.kwargs.get('cart_id')
         # Filter cart items by the provided cart ID
         return cartitem.objects.filter(cart_id=cart_id)
-logger = logging.getLogger(__name__)
-
 class CheckoutView(generics.GenericAPIView):
     serializer_class = OrderItemSerializer
 
     def post(self, request, *args, **kwargs):
-        user = request.user
-
-        # Ensure the user exists
-        if not user:
-            logger.error("User is not found in the request.")
-            return Response({'detail': 'User is not found.'}, status=status.HTTP_400_BAD_REQUEST)
+        user_id = request.data.get('user_id')
 
         try:
-            # Start a transaction to ensure data integrity
-            with transaction.atomic():
-                # Get the user's cart
-                try:
-                    user_cart = cart.objects.get(user=user)
-                except cart.DoesNotExist:
-                    logger.error(f"Cart not found for user {user.id}")
-                    return Response({'detail': 'Cart not found.'}, status=status.HTTP_404_NOT_FOUND)
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
 
-                # Create a new order
-                new_order = order.objects.create(
-                    user=user,
-                    ordertotal=user_cart.totalprice,
-                    date=date.today(),
-                    delivery=0.0  # Assuming default delivery cost
+        with transaction.atomic():
+            try:
+                user_cart = cart.objects.get(user=user)
+            except cart.DoesNotExist:
+                return Response({'detail': 'Cart not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+            new_order = order.objects.create(
+                user=user,
+                ordertotal=user_cart.totalprice,
+                date=date.today(),
+                delivery=0.0
+            )
+
+            cart_items = cartitem.objects.filter(cart=user_cart)
+            order_items = []
+            for cart_item in cart_items:
+                order_item = orderitem.objects.create(
+                    order=new_order,
+                    product=cart_item.product,
+                    quantity=cart_item.quantity
                 )
+                order_items.append(order_item)
 
-                # Transfer all cart items to order items
-                cart_items = cartitem.objects.filter(cart=user_cart)
-                order_items = []
-                for cart_item in cart_items:
-                    order_item = orderitem.objects.create(
-                        order=new_order,
-                        product=cart_item.product,
-                        quantity=cart_item.quantity
-                    )
-                    order_items.append(order_item)
+            cart_items.delete()
 
-                # Clear the cart
-                cart_items.delete()
+        serializer = self.get_serializer(order_items, many=True)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+class SendOTPView(generics.GenericAPIView):
+    serializer_class = OTPSerializer  # Specify the serializer class
 
-            # Serialize and return the order items
-            serializer = self.get_serializer(order_items, many=True)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data.get('email')
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
 
-        except Exception as e:
-            logger.error(f"Error during checkout: {e}")
-            return Response({'detail': 'An error occurred during checkout.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            # Generate a random OTP
+            otp_code = str(random.randint(100000, 999999))  # Generate a 6-digit OTP
+
+            # Create or update OTP
+            otp, created = OTP.objects.get_or_create(user=user)
+            otp.otp_code = otp_code  # Set the generated OTP
+            otp.expires_at = timezone.now() + timedelta(minutes=5)  # Set expiration time to 5 minutes from now
+            otp.save()  # Ensure that the OTP is saved
+
+            # Send OTP via email
+            send_mail(
+                'Your OTP Code',
+                f'Your OTP code is {otp.otp_code}. It will expire in 5 minutes.',
+                'your-email@example.com',  # Replace with your actual email
+                [email],
+                fail_silently=False,
+            )
+
+            return Response({'detail': 'OTP sent.'}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class VerifyOTPView(generics.GenericAPIView):
+    serializer_class = OTPVerifySerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            otp_code = serializer.validated_data['otp_code']
+
+            # Debugging information
+            print(f"Email: {email}")
+            print(f"OTP Code: {otp_code}")
+
+            # Verify OTP
+            try:
+                otp = OTP.objects.get(user__email=email, otp_code=otp_code)
+                if otp.is_valid():
+                    return Response({'detail': 'OTP verified successfully.'}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'detail': 'OTP has expired.'}, status=status.HTTP_400_BAD_REQUEST)
+            except OTP.DoesNotExist:
+                return Response({'detail': 'Invalid OTP.'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            # Print serializer errors for debugging
+            print("Serializer Errors:", serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
