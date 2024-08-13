@@ -1,66 +1,74 @@
 from django.db import models
-from django.contrib.auth.models import User, AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import User
 
 
 
-class AccountManager(BaseUserManager):
-    def create_user(self, email, phone_number, first_name, last_name, birthdate, password=None):
-        if not email:
-            raise ValueError('Users must have an email address')
-        if not phone_number:
-            raise ValueError('Users must have a phone number')
+
+
+# class AccountManager(BaseUserManager):
+#     def create_user(self, email, phone_number, first_name, last_name, birthdate, password=None):
+#         if not email:
+#             raise ValueError('Users must have an email address')
+#         if not phone_number:
+#             raise ValueError('Users must have a phone number')
         
-        user = self.model(
-            email=self.normalize_email(email),
-            phone_number=phone_number,
-            first_name=first_name,
-            last_name=last_name,
-            birthdate=birthdate,
-        )
+#         user = self.model(
+#             email=self.normalize_email(email),
+#             phone_number=phone_number,
+#             first_name=first_name,
+#             last_name=last_name,
+#             birthdate=birthdate,
+#         )
 
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
+#         user.set_password(password)
+#         user.save(using=self._db)
+#         return user
 
-    def create_superuser(self, email, phone_number, first_name, last_name, birthdate, password=None):
-        user = self.create_user(
-            email=self.normalize_email(email),
-            phone_number=phone_number,
-            first_name=first_name,
-            last_name=last_name,
-            birthdate=birthdate,
-            password=password,
-        )
-        user.is_admin = True
-        user.is_superuser = True
-        user.save(using=self._db)
-        return user
+#     def create_superuser(self, email, phone_number, first_name, last_name, birthdate, password=None):
+#         user = self.create_user(
+#             email=self.normalize_email(email),
+#             phone_number=phone_number,
+#             first_name=first_name,
+#             last_name=last_name,
+#             birthdate=birthdate,
+#             password=password,
+#         )
+#         user.is_admin = True
+#         user.is_superuser = True
+#         user.save(using=self._db)
+#         return user
     
 
 
-class User(AbstractBaseUser):
-    email = models.EmailField(verbose_name='email', max_length=60, unique=True)
-    phone_number = models.CharField(max_length=255, unique=True)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
+# class User(AbstractBaseUser):
+#     email = models.EmailField(verbose_name='email', max_length=60, unique=True)
+#     phone_number = models.CharField(max_length=255, unique=True)
+#     first_name = models.CharField(max_length=255)
+#     last_name = models.CharField(max_length=255)
+#     birthdate = models.DateField()
+#     is_admin = models.BooleanField(default=False)
+#     is_superuser = models.BooleanField(default=False)
+#     last_login = models.DateTimeField(auto_now=True)
+
+#     USERNAME_FIELD = 'phone_number'
+#     REQUIRED_FIELDS = ['email', 'first_name', 'last_name', 'birthdate']
+
+
+#     def __str__(self):
+#         return self.phone_number + ', ' + self.email
+    
+#     def has_perm(self, perm, obj=None):
+#         return self.is_admin
+    
+#     def has_module_perms(self, app_label):
+#         return True
+
+# User.REQUIRED_FIELDS = ['first_name', 'last_name', 'phone_number', 'birthdate']
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone_number = models.CharField(max_length=15)
     birthdate = models.DateField()
-    is_admin = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
-    last_login = models.DateTimeField(auto_now=True)
-
-    USERNAME_FIELD = 'phone_number'
-    REQUIRED_FIELDS = ['email', 'first_name', 'last_name', 'birthdate']
-
-    objects = AccountManager()
-
-    def __str__(self):
-        return self.phone_number + ', ' + self.email
-    
-    def has_perm(self, perm, obj=None):
-        return self.is_admin
-    
-    def has_module_perms(self, app_label):
-        return True
 
 class Address(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
@@ -142,7 +150,11 @@ class cartitem(models.Model):
     def __str__(self):
         return f"{self.cart},{self.product},{self.quantity}"
       
-
+# class UserToken(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     token = models.CharField(max_length=255)
+#     def __str__(self):
+#         return f"{self.user},{self.token}"
 
 
 

@@ -3,9 +3,11 @@ from django.contrib.auth import authenticate
 from .models import User, Address, Specification, categories, Product, order, orderitem, cart, cartitem
 
 class UserSerializer(serializers.ModelSerializer):
+    phone_number = serializers.CharField(source='userprofile.phone_number', read_only=True)
+    birthdate = serializers.DateField(source='userprofile.birthdate', read_only=True)
     class Meta:
         model = User
-        fields = '__all__'
+        fields =  fields = ('username', 'email', 'id', 'first_name', 'last_name', 'phone_number', 'birthdate')
 
 
 class AddressSerializer(serializers.ModelSerializer):
@@ -74,7 +76,8 @@ class CartSerializer(serializers.ModelSerializer):
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
-
+    phone_number = serializers.CharField(source='userprofile.phone_number', read_only=True)
+    birthdate = serializers.DateField(source='userprofile.birthdate', read_only=True)
     class Meta:
         model = User
         fields = '__all__'
@@ -83,11 +86,11 @@ class RegisterSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(
             # username=validated_data['username'],
             password=validated_data['password'],
-            email=validated_data['email'],
-            first_name=validated_data['first_name'],
-            last_name=validated_data['last_name'],
-            phone_number=validated_data['phone_number'],
-            birthdate=validated_data['birthdate']
+            username=validated_data['username'],
+            # first_name=validated_data['first_name'],
+            # last_name=validated_data['last_name'],
+            # phone_number=validated_data['phone_number'],
+            # birthdate=validated_data['birthdate']
         )
         return user
     
@@ -96,14 +99,16 @@ class RegisterSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     identifier = serializers.CharField()
     password = serializers.CharField(write_only=True)   
-    
+    phone_number = serializers.CharField(source='userprofile.phone_number', read_only=True)
+    birthdate = serializers.DateField(source='userprofile.birthdate', read_only=True)
+
     def validate(self, data):
         identifier = data['identifier']
         password = data['password']
         
         if '@' in identifier:
             try:
-                user = User.objects.get(email=identifier)
+                user = User.objects.get(username=identifier)
 
             except User.DoesNotExist:
                 raise serializers.ValidationError('Invalid email or password')

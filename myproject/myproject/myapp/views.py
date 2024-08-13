@@ -8,13 +8,14 @@ from .serializers import *
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework.exceptions import NotFound
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.views import APIView
 
 
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get_permissions(self):
         if self.action in ['list']:
@@ -27,89 +28,100 @@ class UserViewSet(viewsets.ModelViewSet):
 class AddressViewSet(viewsets.ModelViewSet):
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
 
 class SpecificationViewSet(viewsets.ModelViewSet):
     queryset = Specification.objects.all()
     serializer_class = SpecificationSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
 
 class CategoriesViewSet(viewsets.ModelViewSet):
     queryset = categories.objects.all()
     serializer_class = CategoriesSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
 
 class OrderItemViewSet(viewsets.ModelViewSet):
     queryset = orderitem.objects.all()
     serializer_class = OrderItemSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = order.objects.all()
     serializer_class = OrderSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
 
 class CartItemViewSet(viewsets.ModelViewSet):
     queryset = cartitem.objects.all()
     serializer_class = CartItemSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
 
 class CartViewSet(viewsets.ModelViewSet):
     queryset = cart.objects.all()
     serializer_class = CartSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     
 
 class UserAddressesView(generics.ListAPIView):
     serializer_class = AddressSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        user_id = self.kwargs['user_id']
+        user_id = self.request.user.id
+        
         return Address.objects.filter(user_id=user_id)
 
 
 class UserOrdersView(generics.ListAPIView):
     serializer_class = OrderSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        user_id = self.kwargs['user_id']
+        user_id = self.request.user.id
         return order.objects.filter(user_id=user_id)
 
 
 class UsersByProductView(generics.ListAPIView):
     serializer_class = UserSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         product_id = self.kwargs['product_id']
         return User.objects.filter(order__orderitem__product_id=product_id)
     
+# class secure(APIView):
+#     permission_classes = [IsAuthenticated]
+
+#     def get(self, request):
+#         content = {'message': 'Hello, World!'}
+#         return Response(content)    
+    
 # user -> cart -> cartitem -> 
 
 class UserCartView(generics.ListAPIView):
     serializer_class = CartItemSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        user_id = self.kwargs.get('user_id')
+        user_id = self.request.user.id
+        print(self.request.user)
+        print(self.request.user.id)
+
         try:
             user = User.objects.get(id=user_id)
         except User.DoesNotExist:
-            raise NotFound(detail="User not found")
+            raise NotFound(detail= "User not found")
 
         carts_with_user = cart.objects.filter(user_id=user_id)
         
@@ -142,7 +154,7 @@ class UserCartView(generics.ListAPIView):
 
 class OrderAddressView(generics.GenericAPIView):
     serializer_class = AddressSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     lookup_field = 'order_id'  # This is the custom field you will use for lookup
 
@@ -171,9 +183,8 @@ class OrderAddressView(generics.GenericAPIView):
         return Response(serializer.data)
 
 class OrdersInAddressView(generics.ListAPIView):
-
     serializer_class = OrderSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         # Get the address_id from the URL parameters
@@ -209,6 +220,7 @@ class LoginView(generics.GenericAPIView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
+        print(request.user)
         serializer = LoginSerializer(data = request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
@@ -218,4 +230,5 @@ class LoginView(generics.GenericAPIView):
         return Response({
             'refresh' : str(refresh),
             'access' : str(refresh.access_token),
+            'user_id' : user.id,
         }, status = status.HTTP_200_OK)
