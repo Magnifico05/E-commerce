@@ -4,12 +4,18 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework import viewsets
+from rest_framework import status
 from .models import *
 from .serializers import *
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from django.db import transaction
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.core.mail import send_mail
 from rest_framework.exceptions import NotFound
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.views import APIView
+
+
 from datetime import  timedelta
 from django.utils import timezone
 
@@ -77,7 +83,8 @@ class UserAddressesView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        user_id = self.kwargs['user_id']
+        user_id = self.request.user.id
+        
         return Address.objects.filter(user_id=user_id)
 
 
@@ -86,7 +93,7 @@ class UserOrdersView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        user_id = self.kwargs['user_id']
+        user_id = self.request.user.id
         return order.objects.filter(user_id=user_id)
 
 
@@ -96,6 +103,16 @@ class UsersByProductView(generics.ListAPIView):
 
     def get_queryset(self):
         product_id = self.kwargs['product_id']
+        return User.objects.filter(order__orderitem__product_id=product_id)
+    
+# class secure(APIView):
+#     permission_classes = [IsAuthenticated]
+
+#     def get(self, request):
+#         content = {'message': 'Hello, World!'}
+#         return Response(content)    
+    
+# user -> cart -> cartitem -> 
         return User.objects.filter(order__orderitem__product_id=product_id) 
 
 class UserCartView(generics.ListAPIView):
@@ -103,11 +120,14 @@ class UserCartView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        user_id = self.kwargs.get('user_id')
+        user_id = self.request.user.id
+        print(self.request.user)
+        print(self.request.user.id)
+
         try:
             user = User.objects.get(id=user_id)
         except User.DoesNotExist:
-            raise NotFound(detail="User not found")
+            raise NotFound(detail= "User not found")
 
         carts_with_user = cart.objects.filter(user_id=user_id)
         
@@ -115,6 +135,8 @@ class UserCartView(generics.ListAPIView):
     
 class OrderAddressView(generics.GenericAPIView):
     serializer_class = AddressSerializer
+    permission_classes = [IsAuthenticated]
+
     lookup_field = 'order_id'  # This is the custom field you will use for lookup
 
     def get_object(self):
@@ -142,7 +164,6 @@ class OrderAddressView(generics.GenericAPIView):
         return Response(serializer.data)
 
 class OrdersInAddressView(generics.ListAPIView):
-
     serializer_class = OrderSerializer
     # permission_classes = [IsAuthenticated]
 
@@ -161,6 +182,37 @@ class OrdersInAddressView(generics.ListAPIView):
         
         # Find all orders for these users
         return order.objects.filter(user__in=users_with_address)
+    
+
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = RegisterSerializer
+    permission_classes = [AllowAny]
+
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
+    
+
+class LoginView(generics.GenericAPIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        print(request.user)
+        serializer = LoginSerializer(data = request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+
+        refresh = RefreshToken.for_user(user)
+
+        return Response({
+            'refresh' : str(refresh),
+            'access' : str(refresh.access_token),
+            'user_id' : user.id,
+        }, status = status.HTTP_200_OK)
         address_id = self.kwargs['address_id']
 
 class ProductSpecificationListView(generics.ListAPIView):
