@@ -1,0 +1,22 @@
+.exclusive {
+  text-decoration: none;
+  position: relative;
+  letter-spacing: 0.03em;
+  line-height: 24px;
+  font-weight: 700;
+  color: inherit;
+  display: inline-block;
+  min-width: 119px;
+  flex-shrink: 0;
+}
+.logo {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 0;
+  text-align: left;
+  font-size: var(--heading-24px-semibold-size);
+  color: var(--button);
+  font-family: var(--heading-24px-semibold);
+}

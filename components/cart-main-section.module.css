@@ -1,0 +1,54 @@
+.price,
+.product,
+.quantity,
+.subtotal {
+  text-decoration: none;
+  position: relative;
+  line-height: 24px;
+  color: inherit;
+  display: inline-block;
+  min-width: 63px;
+}
+.price,
+.quantity,
+.subtotal {
+  min-width: 39px;
+}
+.quantity,
+.subtotal {
+  min-width: 69px;
+}
+.subtotal {
+  min-width: 68px;
+}
+.cartMainSection,
+.priceQuantity {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  max-width: 100%;
+}
+.priceQuantity {
+  margin: 0;
+  flex: 1;
+  justify-content: space-between;
+  gap: var(--gap-xl);
+  text-align: left;
+  font-size: var(--title-16px-regular-size);
+  color: var(--button);
+  font-family: var(--title-20px-medium);
+}
+.cartMainSection {
+  align-self: stretch;
+  box-shadow: var(--categogy-5);
+  border-radius: var(--br-9xs);
+  background-color: var(--primary);
+  overflow: hidden;
+  justify-content: flex-start;
+  padding: var(--padding-5xl) var(--padding-20xl) var(--padding-5xl)
+    var(--padding-21xl);
+  box-sizing: border-box;
+  top: 0;
+  z-index: 99;
+  position: sticky;
+}

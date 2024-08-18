@@ -1,0 +1,30 @@
+.productRowOne,
+.productRows {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+.productRowOne {
+  width: 1322px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 0 0 0 var(--padding-xl);
+  gap: var(--gap-55xl);
+}
+.productRows {
+  align-self: stretch;
+  justify-content: flex-end;
+  padding: 0 0 var(--padding-13xl);
+}
+@media screen and (max-width: 750px) {
+  .productRowOne {
+    gap: var(--gap-18xl);
+  }
+}
+@media screen and (max-width: 450px) {
+  .productRowOne {
+    gap: var(--gap-lg);
+  }
+}

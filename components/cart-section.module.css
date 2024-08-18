@@ -1,0 +1,98 @@
+.g922500x5001Icon {
+  position: absolute;
+  height: 78.15%;
+  width: 90.56%;
+  top: 11.11%;
+  right: 3.89%;
+  bottom: 10.74%;
+  left: 5.56%;
+  max-width: 100%;
+  overflow: hidden;
+  max-height: 100%;
+  object-fit: cover;
+}
+.gamepadCartSmall {
+  height: 54px;
+  width: 54px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.lcdMonitor {
+  position: relative;
+  line-height: 24px;
+  display: inline-block;
+  min-width: 103px;
+}
+.gamepadDetails,
+.gamepadName {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.gamepadName {
+  flex-direction: column;
+  padding: var(--padding-mini) 0 0;
+}
+.gamepadDetails {
+  flex-direction: row;
+  gap: var(--gap-xl);
+}
+.gamepadDivider {
+  position: relative;
+  line-height: 24px;
+  display: inline-block;
+  min-width: 41px;
+  white-space: nowrap;
+}
+.gamepadQuantity,
+.gamepadSeparator {
+  width: 153px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: var(--padding-mini) var(--padding-xl) 0 0;
+  box-sizing: border-box;
+}
+.gamepadQuantity {
+  height: 49px;
+  width: 183px;
+  padding: var(--padding-8xs) 0 0;
+}
+.iconCancel {
+  height: 24px;
+  width: 24px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.cartSection {
+  align-self: stretch;
+  box-shadow: var(--categogy-5);
+  border-radius: var(--br-9xs);
+  background-color: var(--primary);
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: var(--padding-5xl) var(--padding-47xl) var(--padding-5xl)
+    var(--padding-21xl);
+  gap: var(--gap-xl);
+  text-align: left;
+  font-size: var(--title-16px-regular-size);
+  color: var(--button);
+  font-family: var(--title-20px-medium);
+}
+@media screen and (max-width: 1200px) {
+  .cartSection {
+    padding-right: var(--padding-14xl);
+    box-sizing: border-box;
+  }
+}
+@media screen and (max-width: 1050px) {
+  .cartSection {
+    flex-wrap: wrap;
+  }
+}
