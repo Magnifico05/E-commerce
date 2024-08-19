@@ -1,9 +1,13 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
-export default function Register() {
+const Register = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [birthdate, setBirthdate] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
 
@@ -11,22 +15,43 @@ export default function Register() {
         e.preventDefault();
 
         try {
-            const response = await axios.post('/api/auth/register', {
+            const response = await axios.post('http://localhost:8000/api/register/', {
                 username,
                 password,
+                first_name: firstName,
+                last_name: lastName,
+                userprofile: {
+                    phone_number: phoneNumber,
+                    birthdate: birthdate,
+                },
             });
             setSuccess('Registration successful!'); // Update the UI for success
             // Redirect or perform other actions after successful registration
         } catch (err) {
-            setError(err.response.data.detail || 'Registration failed');
+            setError(err.response?.data?.detail || 'Registration failed'); // Update the UI for error
         }
     };
 
     return (
         <div>
             <h1>Register</h1>
+            {success && <p>{success}</p>}
             {error && <p>{error}</p>}
             <form onSubmit={handleRegister}>
+                <input
+                    type="text"
+                    placeholder="First Name"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    required
+                />
+                <input
+                    type="text"
+                    placeholder="Last Name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    required
+                />
                 <input
                     type="text"
                     placeholder="Username"
@@ -41,8 +66,24 @@ export default function Register() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
+                <input
+                    type="text"
+                    placeholder="Phone Number"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    required
+                />
+                <input
+                    type="date"
+                    placeholder="Birthdate"
+                    value={birthdate}
+                    onChange={(e) => setBirthdate(e.target.value)}
+                    required
+                />
                 <button type="submit">Register</button>
             </form>
         </div>
     );
-}
+};
+
+export default Register;
