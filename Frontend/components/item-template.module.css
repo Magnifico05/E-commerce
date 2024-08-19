@@ -1,0 +1,22 @@
+.addToCartButton {
+  position: absolute;
+  height: 10.87%;
+  width: 27.04%;
+  top: 89.13%;
+  right: 12.59%;
+  bottom: 0;
+  left: 60.37%;
+  max-width: 100%;
+  overflow: hidden;
+  max-height: 100%;
+  z-index: 1;
+}
+.itemTemplate {
+  align-self: stretch;
+  height: 322px;
+  position: relative;
+  text-align: left;
+  font-size: var(--title-16px-regular-size);
+  color: var(--button);
+  font-family: var(--title-20px-medium);
+}

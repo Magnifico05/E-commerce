@@ -1,0 +1,21 @@
+.viewAllProducts {
+  position: relative;
+  line-height: 24px;
+  font-weight: 500;
+  display: inline-block;
+  min-width: 94px;
+}
+.button {
+  border-radius: var(--br-9xs);
+  background-color: var(--button2);
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: var(--padding-base) var(--padding-29xl);
+  white-space: nowrap;
+  text-align: left;
+  font-size: var(--title-16px-regular-size);
+  color: var(--text);
+  font-family: var(--title-20px-medium);
+}

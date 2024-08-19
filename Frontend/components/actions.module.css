@@ -1,0 +1,62 @@
+.viewProducts {
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--gap-61xl);
+  min-width: 343px;
+}
+.actions,
+.buttonParent,
+.viewProducts {
+  display: flex;
+  justify-content: flex-start;
+  max-width: 100%;
+}
+.buttonParent {
+  width: 470px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--gap-61xl);
+  min-width: 470px;
+}
+.actions {
+  align-self: stretch;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--gap-154xl);
+  text-align: left;
+  font-size: var(--title-20px-medium-size);
+  color: var(--button);
+  font-family: var(--title-20px-medium);
+}
+@media screen and (max-width: 1200px) {
+  .actions {
+    gap: var(--gap-67xl);
+  }
+}
+@media screen and (max-width: 1050px) {
+  .buttonParent {
+    flex: 1;
+  }
+  .actions {
+    flex-wrap: wrap;
+  }
+}
+@media screen and (max-width: 750px) {
+  .buttonParent,
+  .viewProducts {
+    gap: var(--gap-21xl);
+    min-width: 100%;
+  }
+  .actions {
+    gap: var(--gap-24xl);
+  }
+}
+@media screen and (max-width: 450px) {
+  .viewProducts {
+    gap: var(--gap-xl);
+  }
+  .actions {
+    gap: var(--gap-3xl);
+  }
+}

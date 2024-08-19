@@ -1,0 +1,34 @@
+.whatAreYou {
+  text-decoration: none;
+  position: relative;
+  line-height: 18px;
+  color: inherit;
+}
+.component2Icon {
+  height: 24px;
+  width: 24px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.searchComponentSet,
+.searchInput {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.searchInput {
+  flex-direction: row;
+  gap: var(--gap-15xl);
+}
+.searchComponentSet {
+  border-radius: var(--br-9xs);
+  background-color: var(--secondary);
+  flex-direction: column;
+  padding: var(--padding-6xs) var(--padding-xs) var(--padding-6xs)
+    var(--padding-xl);
+  text-align: left;
+  font-size: var(--title-12px-regular-size);
+  color: var(--color-gray-300);
+  font-family: var(--title-20px-medium);
+}
