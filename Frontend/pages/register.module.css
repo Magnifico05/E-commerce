@@ -1,5 +1,5 @@
-/* Container for the login form */
-.loginContainer {
+/* Container for the register form */
+.registerContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -9,7 +9,7 @@
     padding: 20px;
   }
   
-  .loginForm {
+  .registerForm {
     background-color: white;
     padding: 40px;
     border-radius: 10px;
@@ -21,7 +21,7 @@
     align-items: center;
   }
   
-  .loginTitle {
+  .registerTitle {
     font-size: 30px;
     font-weight: 600;
     color: #de2929; /* Dark text color */
@@ -49,7 +49,7 @@
   .submitButton {
     width: 100%;
     padding: 12px;
-    background-color: #f40f0ff1; /* Primary blue color */
+    background-color: #f40f0ff1; /* Primary red color */
     color: white;
     font-size: 16px;
     font-weight: 600;
@@ -60,7 +60,7 @@
   }
   
   .submitButton:hover {
-    background-color: #dc0b0b; /* Darker blue on hover */
+    background-color: #dc0b0b; /* Darker red on hover */
   }
   
   .submitButton:active {
@@ -80,3 +80,4 @@
   .linkText:hover {
     text-decoration: underline;
   }
+  

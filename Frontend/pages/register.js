@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import styles from './register.module.css';
+
 
 const Register = () => {
     const [username, setUsername] = useState('');
@@ -33,56 +35,112 @@ const Register = () => {
     };
 
     return (
-        <div>
-            <h1>Register</h1>
-            {success && <p>{success}</p>}
-            {error && <p>{error}</p>}
-            <form onSubmit={handleRegister}>
-                <input
-                    type="text"
-                    placeholder="First Name"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    required
-                />
-                <input
-                    type="text"
-                    placeholder="Last Name"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    required
-                />
-                <input
-                    type="text"
-                    placeholder="Username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                />
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-                <input
-                    type="text"
-                    placeholder="Phone Number"
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                    required
-                />
-                <input
-                    type="date"
-                    placeholder="Birthdate"
-                    value={birthdate}
-                    onChange={(e) => setBirthdate(e.target.value)}
-                    required
-                />
-                <button type="submit">Register</button>
-            </form>
-        </div>
+        // <div>
+        //     <h1>Register</h1>
+        //     {success && <p>{success}</p>}
+        //     {error && <p>{error}</p>}
+        //     <form onSubmit={handleRegister}>
+        //         <input
+        //             type="text"
+        //             placeholder="First Name"
+        //             value={firstName}
+        //             onChange={(e) => setFirstName(e.target.value)}
+        //             required
+        //         />
+        //         <input
+        //             type="text"
+        //             placeholder="Last Name"
+        //             value={lastName}
+        //             onChange={(e) => setLastName(e.target.value)}
+        //             required
+        //         />
+        //         <input
+        //             type="text"
+        //             placeholder="Username"
+        //             value={username}
+        //             onChange={(e) => setUsername(e.target.value)}
+        //             required
+        //         />
+        //         <input
+        //             type="password"
+        //             placeholder="Password"
+        //             value={password}
+        //             onChange={(e) => setPassword(e.target.value)}
+        //             required
+        //         />
+        //         <input
+        //             type="text"
+        //             placeholder="Phone Number"
+        //             value={phoneNumber}
+        //             onChange={(e) => setPhoneNumber(e.target.value)}
+        //             required
+        //         />
+        //         <input
+        //             type="date"
+        //             placeholder="Birthdate"
+        //             value={birthdate}
+        //             onChange={(e) => setBirthdate(e.target.value)}
+        //             required
+        //         />
+        //         <button type="submit">Register</button>
+        //     </form>
+        // </div>
+        <div className={styles.registerContainer}>
+      <form className={styles.registerForm} onSubmit={handleRegister}>
+        <h1 className={styles.registerTitle}>Register</h1>
+        {success && <p>{success}</p>}
+        {error && <p>{error}</p>}
+        <input
+          type="text"
+          className={styles.inputField}
+          placeholder="First Name"
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          className={styles.inputField}
+          placeholder="Last Name"
+          value={lastName}
+          onChange={(e) => setLastName(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          className={styles.inputField}
+          placeholder="Email"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          className={styles.inputField}
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          className={styles.inputField}
+          placeholder="Phone Number"
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+          required
+        />
+        <input
+          type="date"
+          className={styles.inputField}
+          placeholder="Birthdate"
+          value={birthdate}
+          onChange={(e) => setBirthdate(e.target.value)}
+          required
+        />
+        <button type="submit" className={styles.submitButton}>Register</button>
+      </form>
+    </div>
     );
 };
 
