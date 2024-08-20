@@ -8,7 +8,7 @@ export type Header1Type = {
 const Header1: NextPage<Header1Type> = ({ className = "" }) => {
   return (
     <div className={[styles.header, className].join(" ")}>
-      <a className={styles.about}>Login</a>
+      <a href='login/'className={styles.about}>Login</a>
     </div>
   );
 };

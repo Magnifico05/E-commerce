@@ -16,14 +16,14 @@ const Header: NextPage<HeaderType> = ({ className = "" }) => {
           <Logo />
           <nav className={styles.navigation}>
             <div className={styles.header1}>
-              <a className={styles.home}>Home</a>
+              <a href=''className={styles.home}>Home</a>
             </div>
             <div className={styles.header1}>
               <a className={styles.contact}>Contact</a>
             </div>
             <Header1 />
             <div className={styles.header1}>
-              <a className={styles.signUp}>Sign Up</a>
+              <a href='register/'className={styles.signUp}>Sign Up</a>
             </div>
           </nav>
         </nav>
@@ -32,12 +32,14 @@ const Header: NextPage<HeaderType> = ({ className = "" }) => {
         <SearchComponentSet />
         <div className={styles.wishlistParent}>
           <img className={styles.wishlistIcon} alt="" src="/wishlist.svg" />
+          <a href="cart/">
           <img
             className={styles.cart1WithBuy}
             loading="lazy"
             alt=""
             src="/cart1-with-buy.svg"
           />
+          </a>
           <img
             className={styles.userIcon}
             loading="lazy"
