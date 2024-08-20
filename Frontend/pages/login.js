@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import styles from './login.module.css';
 
 export default function Login() {
     const [identifier, setIdentifier] = useState('');
@@ -23,26 +24,45 @@ export default function Login() {
     };
 
     return (
-        <div>
-            <h1>Login</h1>
-            {error && <p>{error}</p>}
-            <form onSubmit={handleLogin}>
-                <input
-                    type="text"
-                    placeholder="Email or Phone"
-                    value={identifier}
-                    onChange={(e) => setIdentifier(e.target.value)}
-                    required
-                />
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-                <button type="submit">Login</button>
-            </form>
-        </div>
+        <div className={styles.loginContainer}>
+        <form className={styles.loginForm}>
+          <h2 className={styles.loginTitle}>Login</h2>
+          <input
+            type="text"
+            className={styles.inputField}
+            placeholder="Email"
+          />
+          <input
+            type="password"
+            className={styles.inputField}
+            placeholder="Password"
+          />
+          <button type="submit" className={styles.submitButton}>Log In</button>
+          <div className={styles.linkContainer}>
+            <a href="/forgot-password" className={styles.linkText}>Forgot Password?</a>
+          </div>
+        </form>
+      </div>
+        // <div>
+        //     <h1>Login</h1>
+        //     {error && <p>{error}</p>}
+        //     <form onSubmit={handleLogin}>
+        //         <input
+        //             type="text"
+        //             placeholder="Email or Phone"
+        //             value={identifier}
+        //             onChange={(e) => setIdentifier(e.target.value)}
+        //             required
+        //         />
+        //         <input
+        //             type="password"
+        //             placeholder="Password"
+        //             value={password}
+        //             onChange={(e) => setPassword(e.target.value)}
+        //             required
+        //         />
+        //         <button type="submit">Login</button>
+        //     </form>
+        // </div>
     );
 }
