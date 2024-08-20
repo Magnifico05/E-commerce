@@ -1,9 +1,9 @@
-.fillWithUpArrow {
+/* .fillWithUpArrow {
   height: 74px;
   width: 74px;
   position: relative;
   object-fit: contain;
-}
+} */
 .moreProducts {
   display: flex;
   flex-direction: row;

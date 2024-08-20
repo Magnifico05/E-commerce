@@ -7,6 +7,7 @@ import ProductRows from "../components/product-rows";
 import ItemTemplate from "../components/item-template";
 import ProductRowThree from "../components/product-row-three";
 import styles from "./index.module.css";
+import ScrollToTopButton from "../components/fillWithUpArrow";
 
 const HomePage: NextPage = () => {
   return (
@@ -25,6 +26,7 @@ const HomePage: NextPage = () => {
       <div className={styles.contentAreaWrapper}>
         <div className={styles.contentArea}>
           <div className={styles.productBannerWrapper}>
+          <ScrollToTopButton />
             <ProductBanner
               ourProducts="Our Products"
               exploreOurProducts="Explore Our Products"

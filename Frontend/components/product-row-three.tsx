@@ -33,12 +33,12 @@ const ProductRowThree: NextPage<ProductRowThreeType> = ({ className = "" }) => {
       <div className={styles.productRowFour}>
         <ItemTemplate zAH9D56260021000000Ligh="/672462-zah9d-5626-002-100-0000-lightthenorthfacexguccicoat-1@2x.png" />
         <div className={styles.moreProducts}>
-          <img
+          {/* <img
             className={styles.fillWithUpArrow}
             loading="lazy"
             alt=""
             src="/fill-with-up-arrow.svg"
-          />
+          /> */}
         </div>
       </div>
     </footer>
