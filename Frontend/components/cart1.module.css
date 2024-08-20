@@ -49,6 +49,8 @@
 .theNorthCoat {
   display: inline-block;
   min-width: 118px;
+  color: black;
+
 }
 .div,
 .emptyPrice {

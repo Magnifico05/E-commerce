@@ -40,7 +40,9 @@ const Cart1: NextPage<Cart1Type> = ({
         className={styles.productDescription}
         style={productDescriptionStyle}
       >
+        <a href="product-details-page/">
         <div className={styles.theNorthCoat}>The north coat</div>
+        </a>
         <div className={styles.price}>
           <div className={styles.emptyPrice}>$260</div>
           <div className={styles.div}>$360</div>
