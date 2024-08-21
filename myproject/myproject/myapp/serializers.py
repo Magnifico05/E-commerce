@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
-from .models import User, Address, Specification, categories, Product, order, orderitem, cart, cartitem
+# from .models import User, Address, Specification, categories, Product, order, orderitem, cart, cartitem
+from .models import *
 
 class UserSerializer(serializers.ModelSerializer):
     phone_number = serializers.CharField(source='userprofile.phone_number', read_only=True)
@@ -74,27 +75,58 @@ class CartSerializer(serializers.ModelSerializer):
 
 
 
+# class RegisterSerializer(serializers.ModelSerializer):
+#     password = serializers.CharField(write_only=True)
+#     phone_number = serializers.CharField(source='userprofile.phone_number', read_only=True)
+#     birthdate = serializers.DateField(source='userprofile.birthdate', read_only=True)
+#     class Meta:
+#         model = User
+#         fields = ['username', 'password', 'first_name', 'last_name', 'phone_number', 'birthdate']
+
+#     def create(self, validated_data):
+#         user = User.objects.create_user(
+#             # username=validated_data['username'],
+#             password=validated_data['password'],
+#             username=validated_data['username'],
+#             first_name=validated_data['first_name'],
+#             last_name=validated_data['last_name'],
+#             phone_number=validated_data['phone_number'],
+#             birthdate=validated_data['birthdate']
+#         )
+#         return user
+    
 class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-    phone_number = serializers.CharField(source='userprofile.phone_number', read_only=True)
-    birthdate = serializers.DateField(source='userprofile.birthdate', read_only=True)
+    phone_number = serializers.CharField(write_only=True)
+    birthdate = serializers.DateField(write_only=True)
+
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ['username', 'password', 'first_name', 'last_name', 'phone_number', 'birthdate']
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
 
     def create(self, validated_data):
-        user = User.objects.create_user(
-            # username=validated_data['username'],
-            password=validated_data['password'],
-            username=validated_data['username'],
-            # first_name=validated_data['first_name'],
-            # last_name=validated_data['last_name'],
-            # phone_number=validated_data['phone_number'],
-            # birthdate=validated_data['birthdate']
-        )
-        return user
-    
+        # Extract profile-related fields
+        phone_number = validated_data.pop('phone_number')
+        birthdate = validated_data.pop('birthdate')
 
+        # Create the user
+        user = User.objects.create_user(
+            username=validated_data['username'],
+            password=validated_data['password'],
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name'],
+        )
+
+        # Create the user profile
+        UserProfile.objects.create(
+            user=user,
+            phone_number=phone_number,
+            birthdate=birthdate
+        )
+
+        return user
 
 class LoginSerializer(serializers.Serializer):
     identifier = serializers.CharField()
