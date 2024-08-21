@@ -99,8 +99,8 @@ class RegisterSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     identifier = serializers.CharField()
     password = serializers.CharField(write_only=True)   
-    phone_number = serializers.CharField(source='userprofile.phone_number', read_only=True)
-    birthdate = serializers.DateField(source='userprofile.birthdate', read_only=True)
+    # phone_number = serializers.CharField(source='userprofile.phone_number', read_only=True)
+    # birthdate = serializers.DateField(source='userprofile.birthdate', read_only=True)
 
     def validate(self, data):
         identifier = data['identifier']
@@ -113,12 +113,12 @@ class LoginSerializer(serializers.Serializer):
             except User.DoesNotExist:
                 raise serializers.ValidationError('Invalid email or password')
 
-        else:
-            try:
-                user = User.objects.get(phone_number=identifier)
+        # else:
+        #     try:
+        #         user = User.objects.get(phone_number=identifier)
             
-            except User.DoesNotExist:
-                raise serializers.ValidationError('Invalid phone number or password')
+        #     except User.DoesNotExist:
+        #         raise serializers.ValidationError('Invalid phone number or password')
             
         if not user.check_password(password):
             raise serializers.ValidationError('Invalid email/phone number or password')
@@ -129,6 +129,34 @@ class LoginSerializer(serializers.Serializer):
         return {
             'user': user
         }
+# class LoginSerializer(serializers.Serializer):
+#     identifier = serializers.CharField()
+#     password = serializers.CharField(write_only=True)
+
+#     def validate(self, data):
+#         identifier = data['identifier']
+#         password = data['password']
+
+#         # Assuming identifier can be email or username
+#         try:
+#             if '@' in identifier:
+#                 user = User.objects.get(email=identifier)
+#             # else:
+#             #     user = User.objects.get(username=identifier)
+#         except User.DoesNotExist:
+#             raise serializers.ValidationError('Invalid email or username')
+
+#         if not user.check_password(password):
+#             raise serializers.ValidationError('Invalid credentials')
+
+#         if not user.is_active:
+#             raise serializers.ValidationError('User account is disabled')
+
+#         return {
+#             'user': user
+#         }
+
+    
 class OTPSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True, help_text="The email address to which the OTP will be sent.")
 class OTPVerifySerializer(serializers.Serializer):

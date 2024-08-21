@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
+    'corsheaders',
 ]
 
 
@@ -89,6 +90,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'myproject.urls'
@@ -172,3 +175,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'omarmedhatmoheb@gmail.com'
 EMAIL_HOST_PASSWORD = 'jkjx dwlf wmqp bajj'  # Replace with your actual email password or use an app-specific password if 2FA is enabled
 
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',  # URL of Next.js frontend
+]
