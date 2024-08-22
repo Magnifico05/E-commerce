@@ -5,6 +5,7 @@ import styles from "./quantity.module.css";
 export type QuantityType = {
   className?: string;
   gamepadQuantityNumber?: string;
+  onChange: (newQuantity: number) => void;
 
   /** Style props */
   propGap?: CSSProperties["gap"];
@@ -16,6 +17,7 @@ const Quantity: NextPage<QuantityType> = ({
   propGap,
   gamepadQuantityNumber,
   propMinWidth,
+  onChange,
 }) => {
   const gamepadQuantityFieldStyle: CSSProperties = useMemo(() => {
     return {
@@ -28,6 +30,18 @@ const Quantity: NextPage<QuantityType> = ({
       minWidth: propMinWidth,
     };
   }, [propMinWidth]);
+
+  const handleIncrement = () => {
+    const newQuantity = parseInt(gamepadQuantityNumber || "0", 10) + 1;
+    onChange(newQuantity);
+  };
+
+  const handleDecrement = () => {
+    const newQuantity = parseInt(gamepadQuantityNumber || "0", 10) - 1;
+    if (newQuantity >= 1) {
+      onChange(newQuantity);
+    }
+  };
 
   return (
     <div className={[styles.quantity, className].join(" ")}>
@@ -46,13 +60,15 @@ const Quantity: NextPage<QuantityType> = ({
         <div className={styles.gamepadQuantityDropdown}>
           <img
             className={styles.dropUpSmallIcon}
-            alt=""
+            alt="Increase"
             src="/dropupsmall@2x.png"
+            onClick={handleIncrement} // Increment quantity
           />
           <img
             className={styles.dropDownSmallIcon}
-            alt=""
+            alt="Decrease"
             src="/dropdownsmall.svg"
+            onClick={handleDecrement} // Decrement quantity
           />
         </div>
       </div>

@@ -1,50 +1,209 @@
+import { useEffect, useState } from "react";
 import type { NextPage } from "next";
+import axios from "axios";
 import CartMainSection from "../components/cart-main-section";
 import CartSection from "../components/cart-section";
 import Actions from "../components/actions";
 import styles from "./cart.module.css";
 
+type Product = {
+  id: number;
+  name: string;
+  price: number;
+  image_url: string;
+};
+
+type CartItem = {
+  id: number;
+  product: Product;
+  quantity: number;
+};
+
 const Cart: NextPage = () => {
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get<CartItem[]>('http://localhost:8000/user-cart/', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setCartItems(response.data);
+        setLoading(false);
+      } catch (err) {
+        setError("Failed to load cart items");
+        setLoading(false);
+      }
+    };
+
+    fetchCartItems();
+  }, []);
+
+  const handleQuantityChange = async (id: number, newQuantity: number) => {
+    if (newQuantity < 1) return; // Prevent quantity less than 1
+
+    try {
+      const token = localStorage.getItem("token");
+      await axios.patch(
+        `http://localhost:8000/cart-items/${id}/`,
+        { quantity: newQuantity },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setCartItems((prevItems) =>
+        prevItems.map((item) =>
+          item.id === id ? { ...item, quantity: newQuantity } : item
+        )
+      );
+    } catch (err) {
+      console.error("Failed to update quantity");
+    }
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   return (
     <div className={styles.cart}>
       <CartMainSection />
-      <CartSection
-        propPosition="relative"
-        g922500x5001="/g27cq4500x500-1@2x.png"
-        propHeight="72.22%"
-        propWidth="92.59%"
-        propTop="14.81%"
-        propRight="3.7%"
-        propBottom="12.96%"
-        propLeft="3.7%"
-        lCDMonitor="LCD Monitor"
-        propMinWidth="96px"
-        propWidth1="146px"
-        gamepadDivider="$650"
-        propWidth2="176px"
-        prop="$650"
-        iconCancel1
-        propPosition1="absolute"
-        propMargin="0 !important"
-        propTop1="20px"
-        propLeft1="30px"
-        gamepadQuantityNumber="01"
-        propGap="16px"
-        propMinWidth1="16px"
-      />
-      <section className={styles.cartSectionParent}>
+      {cartItems.map((item) => (
         <CartSection
-          g922500x5001="/g922500x500-1@2x.png"
-          lCDMonitor="H1 Gamepad"
-          gamepadDivider="$550"
-          prop="$1100"
-          iconCancel1={false}
-          gamepadQuantityNumber="02"
+          key={item.id}
+          cartItem={item}
+          onQuantityChange={handleQuantityChange}
+          propPosition="relative"
+          g922500x5001={item.product.image_url}
+          propHeight="72.22%"
+          propWidth="92.59%"
+          propTop="14.81%"
+          propRight="3.7%"
+          propBottom="12.96%"
+          propLeft="3.7%"
+          lCDMonitor={item.product.name}
+          propMinWidth="96px"
+          propWidth1="146px"
+          gamepadDivider={`$${item.product.price}`}
+          propWidth2="176px"
+          prop={`$${item.product.price * item.quantity}`}
+          iconCancel1={true}
+          propPosition1="absolute"
+          propMargin="0 !important"
+          propTop1="20px"
+          propLeft1="30px"
+          gamepadQuantityNumber={item.quantity.toString()}
+          propGap="16px"
+          propMinWidth1="16px"
         />
-        <Actions />
-      </section>
+      ))}
+      <Actions />
     </div>
   );
 };
 
 export default Cart;
+
+// import { useEffect, useState } from "react";
+// import type { NextPage } from "next";
+// import axios from "axios";
+// import CartMainSection from "../components/cart-main-section";
+// import CartSection from "../components/cart-section";
+// import Actions from "../components/actions";
+// import styles from "./cart.module.css";
+
+// type Product = {
+//   id: number;
+//   name: string;
+//   price: number;
+//   image_url: string; // Update this field name according to your API response
+// };
+
+// type CartItem = {
+//   id: number;
+//   product: Product;
+//   quantity: number;
+// };
+
+
+// const Cart: NextPage = () => {
+//   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState('');
+
+//   useEffect(() => {
+//     const fetchCartItems = async () => {
+//       try {
+//         const token = localStorage.getItem("token");
+//         const response = await axios.get<CartItem[]>('http://localhost:8000/user-cart/', {
+//           headers: {
+//             Authorization: `Bearer ${token}`,
+//           },
+//         });
+//         setCartItems(response.data);
+//         setLoading(false);
+//       } catch (err) {
+//         setError("Failed to load cart items");
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchCartItems();
+//   }, []);
+
+//   if (loading) {
+//     return <div>Loading...</div>;
+//   }
+
+//   if (error) {
+//     return <div>{error}</div>;
+//   }
+
+//   return (
+//     <div className={styles.cart}>
+//       <CartMainSection />
+//       {cartItems.map((item) => (
+//         <CartSection
+//           key={item.id}
+//           propPosition="relative"
+//           g922500x5001={item.product.image_url}  // Make sure 'image_url' matches your API response
+//           propHeight="72.22%"
+//           propWidth="92.59%"
+//           propTop="14.81%"
+//           propRight="3.7%"
+//           propBottom="12.96%"
+//           propLeft="3.7%"
+//           lCDMonitor={item.product.name}
+//           propMinWidth="96px"
+//           propWidth1="146px"
+//           gamepadDivider={`$${item.product.price}`}
+//           propWidth2="176px"
+//           prop={`$${item.product.price * item.quantity}`}
+//           iconCancel1={true}
+//           propPosition1="absolute"
+//           propMargin="0 !important"
+//           propTop1="20px"
+//           propLeft1="30px"
+//           // gamepadQuantityNumber={item.quantity}
+//           propGap="16px"
+//           propMinWidth1="16px"
+//         />
+//       ))}
+//       <Actions />
+//     </div>
+//   );
+// };
+
+// export default Cart;

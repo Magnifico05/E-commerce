@@ -70,6 +70,15 @@ class CartItemViewSet(viewsets.ModelViewSet):
     queryset = cartitem.objects.all()
     serializer_class = CartItemSerializer
     permission_classes = [IsAuthenticated]
+    
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(serializer.data)
 
 
 class CartViewSet(viewsets.ModelViewSet):

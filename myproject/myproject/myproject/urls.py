@@ -23,8 +23,8 @@ router.register(r'cart-items', CartItemViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('admin/', admin.site.urls),
-    path('register/', RegisterView.as_view(), name='register'),
-    path('login/', LoginView.as_view(), name='login'),
+    path('register/', RegisterView.as_view(), name='register'), #done
+    path('login/', LoginView.as_view(), name='login'), #done
     #  path('auth/', secure.as_view(), name='secure'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
@@ -34,7 +34,7 @@ urlpatterns = [
     path('orders-in-address/<int:address_id>/', OrdersInAddressView.as_view(), name='orders-in-address'),
     path('user-cart/', UserCartView.as_view(), name='user-cart'),
     path('order-address/<int:order_id>/', OrderAddressView.as_view(), name='order-address'),
-    path('users/<int:user_id>/cart/', UserCartView.as_view(), name='user-cart'),
+    # path('users/<int:user_id>/cart/', UserCartView.as_view(), name='user-cart'),
     path('order/<int:order_id>/address/', OrderAddressView.as_view(), name='order-address'),
     path('address/<int:address_id>/orders/', OrdersInAddressView.as_view(), name='orders-in-address'),
    path('products/<int:product_id>/specifications/', ProductSpecificationListView.as_view(), name='product-specifications'),
