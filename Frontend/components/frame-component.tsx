@@ -1,19 +1,29 @@
 import type { NextPage } from "next";
+import { useEffect, useState } from 'react';
 import Button from "./button";
 import styles from "./frame-component.module.css";
+import axios from 'axios';
 
 export type FrameComponentType = {
   className?: string;
 };
 
-const FrameComponent: NextPage<FrameComponentType> = ({ className = "" }) => {
+export type FrameComponentProps = {
+  className?: string;
+  cartItems: any[];  // You may replace `any` with a more specific type if you have one
+  subtotal: number;
+};
+
+const FrameComponent: NextPage<FrameComponentProps> = ({ className = "", cartItems, subtotal }) => {
+  // You can remove the local state and use the props directly
+
   return (
     <div className={[styles.cartTotalParent, className].join(" ")}>
       <div className={styles.cartTotal}>Cart Total</div>
       <div className={styles.totalDetails}>
         <div className={styles.totalValues}>
           <div className={styles.subtotal}>Subtotal:</div>
-          <div className={styles.shippingValue}>$1750</div>
+          <div className={styles.shippingValue}>${subtotal}</div>
         </div>
         <img
           className={styles.underlineIcon}
@@ -39,7 +49,7 @@ const FrameComponent: NextPage<FrameComponentType> = ({ className = "" }) => {
           <Button
             propBackgroundColor="#db4444"
             propBorder="unset"
-            viewAllProducts="Procees to checkout"
+            viewAllProducts="Proceed to checkout"
             propColor="#fafafa"
             propMinWidth="unset"
             propDisplay="unset"
@@ -51,3 +61,6 @@ const FrameComponent: NextPage<FrameComponentType> = ({ className = "" }) => {
 };
 
 export default FrameComponent;
+
+
+

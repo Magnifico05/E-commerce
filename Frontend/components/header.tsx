@@ -66,7 +66,7 @@ return (
         <Logo />
         <nav className={styles.navigation}>
           <div className={styles.header1}>
-            <a href='' className={styles.home}>Home</a>
+            <a href='/' className={styles.home}>Home</a>
           </div>
           <div className={styles.header1}>
             <a className={styles.contact}>Contact</a>

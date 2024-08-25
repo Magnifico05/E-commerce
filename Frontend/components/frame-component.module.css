@@ -78,7 +78,10 @@
   text-align: left;
   font-size: var(--title-20px-medium-size);
   color: var(--button);
-  font-family: var(--title-20px-medium);
+  font-family: var(--title-20px-medium); 
+  max-width: 100%; /* Adjust width as needed */
+  width:auto;
+  margin: 0 auto; /* Center horizontally within its container */
 }
 @media screen and (max-width: 450px) {
   .cartTotal {
@@ -94,3 +97,6 @@
     box-sizing: border-box;
   }
 }
+
+
+

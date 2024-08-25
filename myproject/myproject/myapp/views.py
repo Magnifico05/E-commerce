@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from django.db import transaction
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.core.mail import send_mail
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 from rest_framework.generics import RetrieveAPIView
@@ -129,6 +129,15 @@ class UserCartView(generics.ListAPIView):
         user_id = self.request.user.id
         print(self.request.user)
         print(self.request.user.id)
+
+        user = self.request.user
+
+        if not user.is_authenticated:
+            raise AuthenticationFailed("Authentication credentials were not provided or are invalid.")
+
+        user_id = user.id
+        print(f"Authenticated User: {user}")
+        print(f"User ID: {user_id}")
 
         try:
             user = User.objects.get(id=user_id)
