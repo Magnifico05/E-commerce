@@ -20,8 +20,10 @@ router.register(r'order-items', OrderItemViewSet)
 router.register(r'carts', CartViewSet)
 router.register(r'cart-items', CartItemViewSet)
 
+
 urlpatterns = [
     path('', include(router.urls)),
+    path('api/me/', MeAPIView.as_view(), name='me'),
     path('admin/', admin.site.urls),
     path('register/', RegisterView.as_view(), name='register'), #done
     path('login/', LoginView.as_view(), name='login'), #done

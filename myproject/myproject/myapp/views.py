@@ -14,6 +14,7 @@ from django.core.mail import send_mail
 from rest_framework.exceptions import NotFound
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
+from rest_framework.generics import RetrieveAPIView
 
 
 from datetime import  timedelta
@@ -31,6 +32,13 @@ class UserViewSet(viewsets.ModelViewSet):
             self.permission_classes = [IsAuthenticated]
         return super().get_permissions()
 
+
+class MeAPIView(RetrieveAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
 
 class AddressViewSet(viewsets.ModelViewSet):
     queryset = Address.objects.all()

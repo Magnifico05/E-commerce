@@ -14,14 +14,14 @@ const HomePage: NextPage = () => {
     <div className={styles.homepage}>
       <header className={styles.frameParent}>
         <div className={styles.headerWrapper}>
-          <Header />
+          {/* <Header /> */}
         </div>
-        <img
+        {/* <img
           className={styles.frameChild}
           loading="lazy"
           alt=""
           src="/line-3.svg"
-        />
+        /> */}
       </header>
       <div className={styles.contentAreaWrapper}>
         <div className={styles.contentArea}>
