@@ -12,12 +12,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class AddressSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    # user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
     class Meta:
         model = Address
         fields = '__all__'
-
 
 class SpecificationSerializer(serializers.ModelSerializer):
     class Meta:
