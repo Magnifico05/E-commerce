@@ -169,6 +169,9 @@ const Cart: NextPage = () => {
     const calculatedSubtotal = cartItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
     setSubtotal(calculatedSubtotal);
     console.log("Subtotal updated:", calculatedSubtotal);
+    const shippingCost = subtotal > 200 ? 0 : 30;
+
+    const totalCost = subtotal + shippingCost;
   }, [cartItems]);
 
   const handleQuantityChange = async (id: number, newQuantity: number) => {

@@ -15,8 +15,10 @@ export type FrameComponentProps = {
 };
 
 const FrameComponent: NextPage<FrameComponentProps> = ({ className = "", cartItems, subtotal }) => {
-  // You can remove the local state and use the props directly
 
+  const shippingCost = subtotal >= 200 ? 0 : 30;
+
+  const totalCost = subtotal + shippingCost;
   return (
     <div className={[styles.cartTotalParent, className].join(" ")}>
       <div className={styles.cartTotal}>Cart Total</div>
@@ -33,7 +35,9 @@ const FrameComponent: NextPage<FrameComponentProps> = ({ className = "", cartIte
         />
         <div className={styles.totalValues}>
           <div className={styles.shipping}>Shipping:</div>
-          <div className={styles.free}>Free</div>
+          <div className={styles.shippingValue}>
+            {shippingCost === 0 ? "Free" : `$${shippingCost}`}
+          </div>
         </div>
         <img
           className={styles.underlineIcon}
@@ -43,10 +47,11 @@ const FrameComponent: NextPage<FrameComponentProps> = ({ className = "", cartIte
         />
         <div className={styles.totalValues}>
           <div className={styles.total}>Total:</div>
-          <div className={styles.shippingValue}>$1750</div>
+          <div className={styles.shippingValue}>${totalCost.toFixed(2)}</div>
         </div>
         <div className={styles.checkout}>
-          <Button
+          <a href="/address">
+          <Button 
             propBackgroundColor="#db4444"
             propBorder="unset"
             viewAllProducts="Proceed to checkout"
@@ -54,6 +59,7 @@ const FrameComponent: NextPage<FrameComponentProps> = ({ className = "", cartIte
             propMinWidth="unset"
             propDisplay="unset"
           />
+          </a>
         </div>
       </div>
     </div>
