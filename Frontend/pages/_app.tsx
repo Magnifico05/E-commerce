@@ -3,6 +3,7 @@ import Head from "next/head";
 import type { AppProps } from "next/app";
 import "./global.css";
 import { UserProvider } from '../context/UserContext';
+import { CartProvider } from '../context/CartContext';
 import Layout from '../components/layout'; // Adjust the import path as needed
 
 
@@ -18,9 +19,11 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       
       <UserProvider>
+        <CartProvider>
       <Layout>
       <Component {...pageProps} />
       </Layout>
+      </CartProvider>
       </UserProvider>
     
     </Fragment> 

@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Product } from '../context/Product';
+import styles from './ProductList.module.css';
+import { useCart } from '../context/CartContext';
 
 
 interface ProductListProps {
@@ -7,49 +9,29 @@ interface ProductListProps {
 }
 
 const ProductList: React.FC<ProductListProps> = ({ products }) => {
+    const [animate, setAnimate] = useState<{ [key: number]: boolean }>({});
+    const { addToCart } = useCart();
+
     return (
-        <div>
-            {products.length > 0 ? (
-                <div className="product-list">
-                    {products.map(product => (
-                        <div key={product.id} className="product-item">
-                            <img src={product.images} alt={product.name} className="product-image" />
-                            <h3 className="product-name">{product.name}</h3>
-                            <p className="product-price">${parseFloat(product.price).toFixed(2)}</p>
-                        </div>
-                    ))}
-                </div>
-            ) : (
-                <p>No products found.</p>
-            )}
-            <style jsx>{`
-                .product-list {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 16px;
-                }
-                .product-item {
-                    border: 1px solid #ddd;
-                    border-radius: 8px;
-                    padding: 16px;
-                    width: 200px;
-                    text-align: center;
-                }
-                .product-image {
-                    max-width: 100%;
-                    height: auto;
-                    border-radius: 4px;
-                }
-                .product-name {
-                    font-size: 1.2em;
-                    margin: 8px 0;
-                }
-                .product-price {
-                    color: #555;
-                }
-            `}</style>
-        </div>
-    );
+        <div className={styles.productList}>
+      {products.length > 0 ? (
+        products.map(product => (
+          <div key={product.id} className={styles.productItem}>
+            <img src={product.images} alt={product.name} className={styles.productImage} />
+            <a href='product-details-page'>
+            <h3 className={styles.productName}>{product.name}</h3>
+            </a>
+            <p className={styles.productPrice}>${product.price}</p>
+            <div className={styles.cartIcon}  onClick={addToCart}>
+              <img src="/add-to-cart-button.svg" alt="Add to Cart" />
+            </div>
+          </div>
+        ))
+      ) : (
+        <p>No products found.</p>
+      )}
+    </div>
+  );
 };
 
 export default ProductList;
