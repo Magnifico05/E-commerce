@@ -31,12 +31,17 @@ class CategoriesSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    images = serializers.SerializerMethodField()
     specification = SpecificationSerializer()
     category = CategoriesSerializer()
 
     class Meta:
         model = Product
         fields = '__all__'
+    
+    def get_images(self, obj):
+        request = self.context.get('request')
+        return request.build_absolute_uri(obj.images.url)
 
 
 class OrderItemSerializer(serializers.ModelSerializer):

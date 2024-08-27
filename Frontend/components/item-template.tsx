@@ -6,6 +6,8 @@ import styles from "./item-template.module.css";
 export type ItemTemplateType = {
   className?: string;
   zAH9D56260021000000Ligh?: string;
+  productName?: string; // Product Name
+  productPrice?: string; // Product Price
   propPadding?: string;
 
   /** Style props */
@@ -20,6 +22,8 @@ const ItemTemplate: NextPage<ItemTemplateType> = ({
   propFlex,
   propMinWidth,
   zAH9D56260021000000Ligh,
+  productName,
+  productPrice,
   propPadding,
 }) => {
   const itemTemplateStyle: CSSProperties = useMemo(() => {
@@ -35,15 +39,22 @@ const ItemTemplate: NextPage<ItemTemplateType> = ({
       className={[styles.itemTemplate, className].join(" ")}
       style={itemTemplateStyle}
     >
-      <Cart1
+      {/* <Cart1
         zAH9D56260021000000Ligh={zAH9D56260021000000Ligh}
         propPadding={propPadding}
-      />
+      /> */}
       <img
         className={styles.addToCartButton}
         alt=""
         src="/add-to-cart-button.svg"
       />
+      <div className={styles.productImage}>
+        <img src={zAH9D56260021000000Ligh} alt={productName} />
+      </div>
+      <div className={styles.productDetails}>
+        <div className={styles.productName}>{productName}</div>
+        <div className={styles.productPrice}>{productPrice}</div>
+      </div>
     </div>
   );
 };

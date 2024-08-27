@@ -66,6 +66,8 @@ class CategoriesViewSet(viewsets.ModelViewSet):
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    permission_classes = [AllowAny]
+
 
 class OrderItemViewSet(viewsets.ModelViewSet):
     queryset = orderitem.objects.all()

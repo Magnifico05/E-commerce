@@ -1,43 +1,33 @@
 import type { NextPage } from "next";
 import ItemTemplate from "./item-template";
+import Cart1 from "./cart1";
 import styles from "./product-rows.module.css";
+
+export type Product = {
+  id: number;
+  imageUrl: string; // The URL of the product image
+  name: string; // Product name (optional, if needed)
+  price: string; // Product price (optional, if needed)
+};
 
 export type ProductRowsType = {
   className?: string;
+  products: Product[]; // Array of product objects
 };
 
-const ProductRows: NextPage<ProductRowsType> = ({ className = "" }) => {
+const ProductRows: NextPage<ProductRowsType> = ({ className = "", products }) => {
   return (
     <div className={[styles.productRows, className].join(" ")}>
       <div className={styles.productRowOne}>
-        <ItemTemplate
-          propAlignSelf="unset"
-          propFlex="1"
-          propMinWidth="248px"
-          zAH9D56260021000000Ligh="/672462-zah9d-5626-002-100-0000-lightthenorthfacexguccicoat-1@2x.png"
+      {products.map((product) => (
+          <Cart1
+          key={product.id}
+          imageUrl={product.imageUrl} 
+          productName={product.name}
+          productPrice={product.price}
           propPadding="0px 20px 0px 0px"
-        />
-        <ItemTemplate
-          propAlignSelf="unset"
-          propFlex="1"
-          propMinWidth="248px"
-          zAH9D56260021000000Ligh="/672462-zah9d-5626-002-100-0000-lightthenorthfacexguccicoat-1@2x.png"
-          propPadding="0px 20px 0px 0px"
-        />
-        <ItemTemplate
-          propAlignSelf="unset"
-          propFlex="1"
-          propMinWidth="248px"
-          zAH9D56260021000000Ligh="/672462-zah9d-5626-002-100-0000-lightthenorthfacexguccicoat-1@2x.png"
-          propPadding="0px 20px 0px 0px"
-        />
-        <ItemTemplate
-          propAlignSelf="unset"
-          propFlex="1"
-          propMinWidth="248px"
-          zAH9D56260021000000Ligh="/672462-zah9d-5626-002-100-0000-lightthenorthfacexguccicoat-1@2x.png"
-          propPadding="0px 20px 0px 0px"
-        />
+          />
+        ))}
       </div>
     </div>
   );
