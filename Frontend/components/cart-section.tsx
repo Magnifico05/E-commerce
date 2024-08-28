@@ -9,7 +9,7 @@ export type CartItem = {
     id: number;
     name: string;
     price: number;
-    image_url: string;
+    // image_url: string;
   };
   quantity: number;
 };
@@ -26,7 +26,7 @@ export type CartSectionType = {
   className?: string;
   cartItem: CartItem; // Added prop
   onQuantityChange: (id: number, newQuantity: number) => void; // Added prop
-  g922500x5001?: string;
+  // g922500x5001?: string;
   lCDMonitor?: string;
   gamepadDivider?: string;
   prop?: string;
@@ -57,7 +57,7 @@ const CartSection: NextPage<CartSectionType> = ({
   cartItem,
   onQuantityChange,
   propPosition,
-  g922500x5001,
+  // g922500x5001,
   propHeight,
   propWidth,
   propTop,
@@ -134,13 +134,13 @@ const CartSection: NextPage<CartSectionType> = ({
     >
       <div className={styles.gamepadDetails}>
         <div className={styles.gamepadCartSmall}>
-          <img
+          {/* <img
             className={styles.g922500x5001Icon}
             loading="lazy"
             alt=""
             src={g922500x5001}
             style={g922500x5001IconStyle}
-          />
+          /> */}
         </div>
 
         <div className={styles.gamepadName}>
