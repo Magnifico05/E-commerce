@@ -43,7 +43,7 @@ const Actions: NextPage<ActionsType> = ({ className = "" }) => {
           propMinWidth="99px"
           propDisplay="inline-block"
         /> */}
-        <FrameComponent />
+        {/* <FrameComponent /> */}
       </div>
     </div>
   );

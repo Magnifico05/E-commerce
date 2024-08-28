@@ -175,25 +175,38 @@ const Cart: NextPage = () => {
   }, [cartItems]);
 
   const handleQuantityChange = async (id: number, newQuantity: number) => {
-    if (newQuantity < 1) return; // Prevent quantity less than 1
-
     try {
       const token = localStorage.getItem("token");
-      await axios.patch(
-        `http://localhost:8000/cart-items/${id}/`,
-        { quantity: newQuantity },
-        {
+  
+      if (newQuantity < 1) {
+        // Remove item from cart
+        await axios.delete(`http://localhost:8000/cart-items/${id}/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
-      );
-
-      setCartItems((prevItems) =>
-        prevItems.map((item) =>
-          item.id === id ? { ...item, quantity: newQuantity } : item
-        )
-      );
+        });
+  
+        // Remove item from state
+        setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+      } else {
+        // Update item quantity
+        await axios.patch(
+          `http://localhost:8000/cart-items/${id}/`,
+          { quantity: newQuantity },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+  
+        // Update item quantity in state
+        setCartItems((prevItems) =>
+          prevItems.map((item) =>
+            item.id === id ? { ...item, quantity: newQuantity } : item
+          )
+        );
+      }
     } catch (err) {
       console.error("Failed to update quantity");
     }

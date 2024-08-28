@@ -38,9 +38,7 @@ const Quantity: NextPage<QuantityType> = ({
 
   const handleDecrement = () => {
     const newQuantity = parseInt(gamepadQuantityNumber || "0", 10) - 1;
-    if (newQuantity >= 1) {
-      onChange(newQuantity);
-    }
+    onChange(newQuantity);
   };
 
   return (
