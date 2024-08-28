@@ -22,7 +22,7 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
             <h3 className={styles.productName}>{product.name}</h3>
             </a>
             <p className={styles.productPrice}>${product.price}</p>
-            <div className={styles.cartIcon}  onClick={addToCart}>
+            <div className={styles.cartIcon}  onClick={() => addToCart(product.id,1)}>
               <img src="/add-to-cart-button.svg" alt="Add to Cart" />
             </div>
           </div>
