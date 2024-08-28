@@ -264,6 +264,8 @@ class LoginView(generics.GenericAPIView):
         serializer = LoginSerializer(data = request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
+        cart.objects.get_or_create(user=user)
+
 
         refresh = RefreshToken.for_user(user)
 

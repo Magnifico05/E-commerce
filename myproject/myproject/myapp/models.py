@@ -147,7 +147,7 @@ class orderitem(models.Model):
 
 class cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    totalprice = models.FloatField() 
+    totalprice = models.FloatField(default=0) 
     def __str__(self):
         return f"Cart for {self.user}"
     
