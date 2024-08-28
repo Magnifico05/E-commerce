@@ -1,0 +1,84 @@
+.checkoutContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: #fff;
+  color: #333;
+}
+
+
+.checkoutContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 900px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.cartTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+}
+
+.cartTable th,
+.cartTable td {
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+
+.cartTable th {
+  background-color: #d32f2f; /* Red color for the header */
+  color: #fff;
+}
+
+.summary {
+  width: 100%;
+  max-width: 400px;
+  background-color: #fff;
+  border: 2px solid #d32f2f;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  margin: 0 auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.summary p {
+  margin: 10px 0;
+  font-size: 18px;
+}
+
+.cashButton {
+  background-color: #d32f2f; /* Red color for the button */
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.cashButton:hover {
+  background-color: #b71c1c; /* Darker red on hover */
+}
+
+.orderConfirmation {
+  text-align: center;
+  color: #d32f2f; /* Red color for the confirmation text */
+}
+
+.orderConfirmation p {
+  margin-top: 20px;
+  font-size: 18px;
+}
