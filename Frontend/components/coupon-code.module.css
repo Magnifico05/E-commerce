@@ -1,0 +1,32 @@
+.couponCode1 {
+  position: relative;
+  line-height: 24px;
+  display: inline-block;
+  min-width: 112px;
+}
+.couponCode,
+.couponInput {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.couponInput {
+  flex: 1;
+  border-radius: var(--br-9xs);
+  border: 1px solid var(--button);
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: var(--padding-sm) var(--padding-5xl);
+  min-width: 112px;
+  white-space: nowrap;
+}
+.couponCode {
+  align-self: stretch;
+  flex-wrap: wrap;
+  gap: var(--gap-base);
+  text-align: left;
+  font-size: var(--title-16px-regular-size);
+  color: var(--color-gray-300);
+  font-family: var(--title-20px-medium);
+}

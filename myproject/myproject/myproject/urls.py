@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.conf import settings
+from django.conf.urls.static import static
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from myapp.views import *
@@ -20,11 +22,13 @@ router.register(r'order-items', OrderItemViewSet)
 router.register(r'carts', CartViewSet)
 router.register(r'cart-items', CartItemViewSet)
 
+
 urlpatterns = [
     path('', include(router.urls)),
+    path('api/me/', MeAPIView.as_view(), name='me'),
     path('admin/', admin.site.urls),
-    path('register/', RegisterView.as_view(), name='register'),
-    path('login/', LoginView.as_view(), name='login'),
+    path('register/', RegisterView.as_view(), name='register'), #done
+    path('login/', LoginView.as_view(), name='login'), #done
     #  path('auth/', secure.as_view(), name='secure'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
@@ -34,7 +38,7 @@ urlpatterns = [
     path('orders-in-address/<int:address_id>/', OrdersInAddressView.as_view(), name='orders-in-address'),
     path('user-cart/', UserCartView.as_view(), name='user-cart'),
     path('order-address/<int:order_id>/', OrderAddressView.as_view(), name='order-address'),
-    path('users/<int:user_id>/cart/', UserCartView.as_view(), name='user-cart'),
+    # path('users/<int:user_id>/cart/', UserCartView.as_view(), name='user-cart'),
     path('order/<int:order_id>/address/', OrderAddressView.as_view(), name='order-address'),
     path('address/<int:address_id>/orders/', OrdersInAddressView.as_view(), name='orders-in-address'),
    path('products/<int:product_id>/specifications/', ProductSpecificationListView.as_view(), name='product-specifications'),
@@ -47,3 +51,5 @@ urlpatterns = [
     path('verify-otp/', VerifyOTPView.as_view(), name='verify-otp'),
 ]
 
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

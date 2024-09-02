@@ -11,9 +11,12 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from django.db import transaction
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from django.core.mail import send_mail
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
+from rest_framework.generics import RetrieveAPIView
+from rest_framework.decorators import action
+
 
 
 from datetime import  timedelta
@@ -32,11 +35,23 @@ class UserViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
 
 
+class MeAPIView(RetrieveAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
 class AddressViewSet(viewsets.ModelViewSet):
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
     permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        return Address.objects.filter(user=self.request.user)
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 class SpecificationViewSet(viewsets.ModelViewSet):
     queryset = Specification.objects.all()
@@ -53,6 +68,8 @@ class CategoriesViewSet(viewsets.ModelViewSet):
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    permission_classes = [AllowAny]
+
 
 class OrderItemViewSet(viewsets.ModelViewSet):
     queryset = orderitem.objects.all()
@@ -70,6 +87,50 @@ class CartItemViewSet(viewsets.ModelViewSet):
     queryset = cartitem.objects.all()
     serializer_class = CartItemSerializer
     permission_classes = [IsAuthenticated]
+    
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(serializer.data)
+    
+    
+    @action(detail=False, methods=['post'])
+    def add_to_cart(self, request):
+        try:
+            product_id = request.data.get('product_id')
+            quantity = request.data.get('quantity', 1)
+
+            # Retrieve or create the user's cart
+            user_cart, created = cart.objects.get_or_create(user=request.user)
+
+            # Retrieve the product by ID
+            product = Product.objects.get(id=product_id)
+
+            # Retrieve or create the cart item
+            cart_item, created = cartitem.objects.get_or_create(
+                cart=user_cart,
+                product=product,
+                defaults={'quantity': quantity}
+            )
+
+            if not created:
+                # If the item already exists, update the quantity
+                cart_item.quantity += quantity
+                cart_item.save()
+
+            # Optionally, update the total price of the cart
+            user_cart.totalprice = sum(item.product.price * item.quantity for item in user_cart.cartitem_set.all())
+            user_cart.save()
+
+            return Response({'message': 'Item added to cart'}, status=status.HTTP_200_OK)
+        except Product.DoesNotExist:
+            return Response({'error': 'Product not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class CartViewSet(viewsets.ModelViewSet):
@@ -112,6 +173,15 @@ class UserCartView(generics.ListAPIView):
         user_id = self.request.user.id
         print(self.request.user)
         print(self.request.user.id)
+
+        user = self.request.user
+
+        if not user.is_authenticated:
+            raise AuthenticationFailed("Authentication credentials were not provided or are invalid.")
+
+        user_id = user.id
+        print(f"Authenticated User: {user}")
+        print(f"User ID: {user_id}")
 
         try:
             user = User.objects.get(id=user_id)
@@ -194,6 +264,8 @@ class LoginView(generics.GenericAPIView):
         serializer = LoginSerializer(data = request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
+        cart.objects.get_or_create(user=user)
+
 
         refresh = RefreshToken.for_user(user)
 

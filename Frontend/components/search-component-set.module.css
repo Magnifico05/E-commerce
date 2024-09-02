@@ -1,0 +1,68 @@
+/* .whatAreYou {
+  text-decoration: none;
+  position: relative;
+  line-height: 18px;
+  color: inherit;
+}
+.component2Icon {
+  height: 24px;
+  width: 24px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.searchComponentSet,
+.searchInput {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.searchInput {
+  flex-direction: row;
+  gap: var(--gap-15xl);
+}
+.searchComponentSet {
+  border-radius: var(--br-9xs);
+  background-color: var(--secondary);
+  flex-direction: column;
+  padding: var(--padding-6xs) var(--padding-xs) var(--padding-6xs)
+    var(--padding-xl);
+  text-align: left;
+  font-size: var(--title-12px-regular-size);
+  color: var(--color-gray-300);
+  font-family: var(--title-20px-medium);
+} */
+
+
+/* search-component-set.module.css */
+.searchForm {
+  display: flex;
+  align-items: center;
+  /* Add any additional styling you need here */
+}
+
+.searchInput {
+  flex-grow: 1;
+  border: none;
+  padding: 10px;
+  font-size: 16px;
+  /* Match the original background and text color */
+  background-color: #f5f5f5; /* Adjust to your desired background */
+  color: #333; /* Adjust to your desired text color */
+  border-radius: 22px; /* Adjust to match the original shape */
+  outline: none; /* Remove the default outline */
+}
+
+.searchButton {
+  background: none;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  margin-left: -30px; /* Adjust this value to position the icon correctly */
+  margin-top: 4px;
+}
+
+.searchButton img {
+  width: 20px; /* Adjust size to match the original icon */
+  height: 20px;
+}

@@ -85,7 +85,8 @@ class Address(models.Model):
     building_number = models.CharField(max_length=255)
     apartment_number = models.CharField(max_length=255)
     notes = models.TextField(blank=True)
-    delivery_cost = models.FloatField(default=0.0) 
+    delivery_cost = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)  # Example
+
 
     def __str__(self):
        return f"{self.country}, {self.governorate}, {self.city}, {self.street}, {self.building_number}, {self.apartment_number}"
@@ -146,7 +147,7 @@ class orderitem(models.Model):
 
 class cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    totalprice = models.FloatField() 
+    totalprice = models.FloatField(default=0) 
     def __str__(self):
         return f"Cart for {self.user}"
     

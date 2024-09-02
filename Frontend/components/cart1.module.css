@@ -1,0 +1,133 @@
+.fillHeartIcon {
+  width: 34px;
+  height: 34px;
+  position: relative;
+  display: none;
+}
+.fillHeartParent {
+  height: 76px;
+  width: 34px;
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: var(--gap-5xs);
+}
+.zah9d56260021000000LightIcon {
+  position: absolute;
+  top: calc(50% - 73px);
+  left: calc(50% - 70px);
+  width: 140px;
+  height: 146px;
+  object-fit: cover;
+}
+.productImageFour {
+  height: 180px;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+.cart1 {
+  align-self: stretch;
+  border-radius: var(--br-9xs);
+  background-color: var(--secondary);
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: var(--padding-16xl) var(--padding-21xl);
+}
+.div,
+.emptyPrice,
+.theNorthCoat {
+  position: relative;
+  line-height: 24px;
+  font-weight: 500;
+}
+.theNorthCoat {
+  display: inline-block;
+  min-width: 118px;
+  color: black;
+
+}
+.div,
+.emptyPrice {
+  white-space: nowrap;
+}
+.emptyPrice {
+  display: inline-block;
+  min-width: 41px;
+}
+.div {
+  align-self: stretch;
+  width: 41px;
+  text-decoration: line-through;
+  color: var(--button);
+  display: none;
+  opacity: 0.5;
+}
+.price {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: var(--gap-xs);
+  color: var(--button2);
+}
+.vectorIcon {
+  height: 20px;
+  width: 20px;
+  position: relative;
+  border-radius: var(--br-11xs-4);
+  min-height: 20px;
+}
+.fiveStar {
+  display: none;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.div1 {
+  height: 20px;
+  width: 32px;
+  position: relative;
+  line-height: 21px;
+  font-weight: 600;
+  display: inline-block;
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+.cart,
+.fiveStarParent,
+.productDescription {
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: var(--gap-5xs);
+}
+.fiveStarParent {
+  width: 140px;
+  display: none;
+  flex-direction: row;
+  font-size: var(--title-14px-semibold-size);
+}
+.cart,
+.productDescription {
+  display: flex;
+  flex-direction: column;
+}
+.cart {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  gap: var(--gap-base);
+  text-align: left;
+  font-size: var(--title-16px-regular-size);
+  color: var(--button);
+  font-family: var(--title-20px-medium);
+}

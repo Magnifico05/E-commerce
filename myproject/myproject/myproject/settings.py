@@ -1,5 +1,5 @@
 # settings.py
-
+import os
 from pathlib import Path
 from decouple import config, Csv
 from datetime import timedelta
@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
+    'corsheaders',
 ]
 
 
@@ -89,6 +90,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'myproject.urls'
@@ -116,15 +119,14 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': config('DB_ENGINE', default='django.db.backends.postgresql'),
-        'NAME': config('DB_NAME', default='e_comerce'),
-        'USER': config('DB_USER', default='omar_medhat'),
-        'PASSWORD': config('DB_PASSWORD', default='anaconda'),
-        'HOST': config('DB_HOST', default='localhost'),
-        'PORT': config('DB_PORT', default='5432'),
+        'ENGINE': config('DB_ENGINE'),
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -172,3 +174,10 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'omarmedhatmoheb@gmail.com'
 EMAIL_HOST_PASSWORD = 'jkjx dwlf wmqp bajj'  # Replace with your actual email password or use an app-specific password if 2FA is enabled
 
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',  # URL of Next.js frontend
+]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

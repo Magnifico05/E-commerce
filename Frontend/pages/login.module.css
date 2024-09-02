@@ -1,0 +1,82 @@
+/* Container for the login form */
+.loginContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh; /* Full page height */
+    background-color: #f9f9f9b5; /* Adjust the background color */
+    padding: 20px;
+  }
+  
+  .loginForm {
+    background-color: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    width: 100%;
+    max-width: 400px; /* Limit the form's width */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .loginTitle {
+    font-size: 30px;
+    font-weight: 600;
+    color: #de2929; /* Dark text color */
+    margin-bottom: 35px;
+    font-family: Helvetica, Arial, sans-serif;
+  }
+  
+  .inputField {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd; /* Light border */
+    border-radius: 5px;
+    font-size: 16px;
+    outline: none;
+    background-color: #f5f5f5; /* Light background similar to your search input */
+    color: #333;
+  }
+  
+  .inputField:focus {
+    border-color: #888; /* Highlighted border on focus */
+    background-color: #eaeaea; /* Slightly darker background on focus */
+  }
+  
+  .submitButton {
+    width: 100%;
+    padding: 12px;
+    background-color: #f40f0ff1; /* Primary blue color */
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .submitButton:hover {
+    background-color: #dc0b0b; /* Darker blue on hover */
+  }
+  
+  .submitButton:active {
+    background-color: #800000; /* Even darker on click */
+  }
+  
+  .linkContainer {
+    margin-top: 15px;
+  }
+  
+  .linkText {
+    color: #ee4141;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  
+  .linkText:hover {
+    text-decoration: underline;
+  }

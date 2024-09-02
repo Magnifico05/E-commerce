@@ -1,0 +1,34 @@
+.layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.header {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.mainContent {
+    margin-top: 60px; /* Adjust this value based on header height */
+    padding: 0 20px;
+    flex: 1;
+}
+
+/* Media queries for layout responsiveness */
+@media (max-width: 768px) {
+    .mainContent {
+        margin-top: 50px; /* Adjust margin for smaller screens */
+        padding: 0 10px; /* Adjust padding for smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .mainContent {
+        margin-top: 40px; /* Further adjust margin for very small screens */
+        padding: 0 5px; /* Further adjust padding for very small screens */
+    }
+}

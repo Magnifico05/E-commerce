@@ -1,0 +1,31 @@
+.cart,
+.cartSectionParent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.cartSectionParent {
+  align-self: stretch;
+  gap: var(--gap-5xl);
+  max-width: 100%;
+}
+.cart {
+  width: 100%;
+  position: relative;
+  background-color: var(--primary);
+  overflow: hidden;
+  padding: 61px 51px 43px;
+  box-sizing: border-box;
+  gap: var(--gap-21xl);
+  line-height: normal;
+  letter-spacing: normal;
+}
+@media screen and (max-width: 750px) {
+  .cart {
+    gap: var(--gap-xl);
+    padding-left: var(--padding-6xl);
+    padding-right: var(--padding-6xl);
+    box-sizing: border-box;
+  }
+}
